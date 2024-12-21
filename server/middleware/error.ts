@@ -1,7 +1,7 @@
 import ErrorHandler from "../utils/ErrorHandler";
 import { NextFunction, Request, Response } from "express";
 
-const myErrors = (
+const errorMiddleware = (
   err: ErrorHandler,
   req: Request,
   res: Response,
@@ -40,4 +40,4 @@ const myErrors = (
   });
 };
 
-export default myErrors;
+export default errorMiddleware;

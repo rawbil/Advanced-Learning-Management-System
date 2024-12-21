@@ -3,6 +3,8 @@ export const app = express();
 import cors from "cors";
 import cookieParser from "cookie-parser";
 require("dotenv").config();
+
+import errorMiddleware from "./middleware/error";
 //END OF IMPORTS
 
 //body parser
@@ -38,3 +40,5 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
 app.use((req: Request, res: Response, err:any) => {
     res.status(err.statusCode || 500).json({success: "false", message: err.message || "Internal Server error"})
 })
+
+app.use(errorMiddleware)
