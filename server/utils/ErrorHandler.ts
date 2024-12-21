@@ -1,5 +1,9 @@
 class ErrorHandler extends Error {
+    keyValue(keyValue: any) {
+        throw new Error("Method not implemented.");
+    }
     statusCode: number;
+    path: any;
 
     constructor(message: string, statusCode: number) {
         super(message);
