@@ -36,7 +36,14 @@ export const registerUser = catchAsyncErrors(
       // const activationLink = `${process.env.ORIGIN}/user/activate/${activationCode}`;
 
       const data = { user: { name: user.name }, activationCode };
-      const html = await ejs.renderFile(path.join(__dirname, ""))
+      const html = await ejs.renderFile(path.join(__dirname, "../mails/activation-mails.ejs"), data);
+
+      try {
+        await 
+      } catch (error) {
+        
+      }
+
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }

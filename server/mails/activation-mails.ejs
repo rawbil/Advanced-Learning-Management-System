@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,5 +13,31 @@
     <p>If you did not create an account, please ignore this email.</p>
     <p>Best regards,</p>
     <p>The LMS Team</p>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS Account Activation</title>
+</head>
+<body>
+    <div class="email-wrapper">
+        <div class="email-header">
+            <h1>Welcome to LMS!</h1>
+            <div class="email-body">
+                <p>Hello <%= user.name %></p>
+                <p>Thank you for registering with LMS, To activate your accout, please use the following activation code: </p>
+                <h2><%= activationCode %></h2>
+                <p>Please enter this code on the activation code within the next 5 minutes</p>
+                <p>If you did not register for an LMS, please ignore this email.</p>
+                <div class="email-footer">
+                    <p>If you have any questions, please don't hesitate to contact us at <a href="mailto:support@LMS.com">support@LMS.com</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
