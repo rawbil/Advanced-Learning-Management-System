@@ -47,7 +47,7 @@ export const registerUser = catchAsyncErrors(
           email: user.email,
           subject: "Activate your account",
           template: "activation-mails.ejs",
-          data,
+          data: data,
         });
         res
           .status(200)

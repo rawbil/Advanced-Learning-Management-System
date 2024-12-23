@@ -49,7 +49,9 @@ const sendMail = async (options: Options) => {
             auth: {
                 user: process.env.SMTP_MAIL,
                 pass: process.env.SMTP_PASSWORD
-            }
+            },
+            logger: true,
+            debug: true,
         });
 
         const {email, subject, template, data} = options;
