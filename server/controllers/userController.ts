@@ -4,9 +4,10 @@ import ErrorHandler from "../utils/ErrorHandler";
 import catchAsyncErrors from "../middleware/catchAsyncErrors";
 import jwt, { Secret } from "jsonwebtoken";
 require("dotenv").config();
-import ejs from 'ejs';
-import nodemailer from 'nodemailer'
+import ejs from "ejs";
+import nodemailer from "nodemailer";
 import path from "path";
+import sendMail from "../utils/sendMail";
 
 //register user
 interface IRegistrationBody {
@@ -36,14 +37,28 @@ export const registerUser = catchAsyncErrors(
       // const activationLink = `${process.env.ORIGIN}/user/activate/${activationCode}`;
 
       const data = { user: { name: user.name }, activationCode };
-      const html = await ejs.renderFile(path.join(__dirname, "../mails/activation-mails.ejs"), data);
+      const html = await ejs.renderFile(
+        path.join(__dirname, "../mails/activation-mails.ejs"),
+        data
+      );
 
       try {
-        await 
-      } catch (error) {
-        
+        await sendMail({
+          email: user.email,
+          subject: "Activate your account",
+          template: "activation-mails.ejs",
+          data,
+        });
+        res
+          .status(200)
+          .json({
+            success: true,
+            message: `Please check your email: ${user.email} to activate your account`,
+            activationToken: activationToken.token
+          });
+      } catch (error: any) {
+        return next(new ErrorHandler(error.message, 400))
       }
-
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
