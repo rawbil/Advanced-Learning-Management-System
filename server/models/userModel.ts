@@ -1,5 +1,7 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import bcrypt from "bcrypt";
+require('dotenv').config();
+import jwt from 'jsonwebtoken';
 
 //**END OF IMPORTS**
 
@@ -18,6 +20,8 @@ export interface IUser extends Document {
   isVerified: boolean;
   courses: Array<{ courseId: string }>;
   comparePassword: (password: string) => Promise<boolean>;
+  SignAccessToken: () => string,
+  SignRefreshAccessToken: () => string,
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema(
