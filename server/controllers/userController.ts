@@ -124,37 +124,51 @@ export const activateUser = catchAsyncErrors(
   }
 );
 
-
 //Login User
 interface ILoginRequest {
-  email: string,
-  password: string,
+  email: string;
+  password: string;
 }
 
-export const LoginUser = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const {email, password} = req.body as ILoginRequest;
+export const LoginUser = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, password } = req.body as ILoginRequest;
 
-    if(!email || !password ) {
-      return next(new ErrorHandler("Please fill in all the fields", 400));
+      if (!email || !password) {
+        return next(new ErrorHandler("Please fill in all the fields", 400));
+      }
+
+      const user = await userModel.findOne({ email }).select("+password");
+      if (!user) {
+        return next(new ErrorHandler("Invalid email or password", 400));
+      }
+
+      //compare password
+      const isPasswordMatch = await user.comparePassword(password);
+      if (!isPasswordMatch) {
+        return next(new ErrorHandler("Invalid email or password", 400));
+      }
+
+      //call sendToken and set cookies
+      sendToken(user, 200, res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
     }
-
-    const user = await userModel.findOne({email}).select("+password");
-    if(!user) {
-      return next(new ErrorHandler("Invalid email or password", 400));
-    };
-
-    //compare password
-    const isPasswordMatch = await user.comparePassword(password);
-    if(!isPasswordMatch) {
-      return next(new ErrorHandler("Invalid email or password", 400));
-    }
-
-    //call sendToken and set cookies
-    sendToken(user,200,res);
-
-
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 400));
   }
-})
+);
+
+//Logout user
+export const LogoutUser = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.cookie("access_token", "", { maxAge: 1 }); //sets access_token cookie to an empty string and maxAge to 1 millisecond, effectively removing it.
+      res.cookie("refresh_token", "", { maxAge: 1 });
+      res
+        .status(200)
+        .json({ success: true, message: "User logged out successfully" });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);

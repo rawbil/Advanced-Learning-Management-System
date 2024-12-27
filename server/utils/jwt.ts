@@ -39,7 +39,7 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
 
   const refreshTokenOptions: ITokenOptions = {
     expires: new Date(Date.now() + refreshTokenExpire * 1000),
-    maxAge: accessTokenExpire * 1000,
+    maxAge: refreshTokenExpire * 1000,
     httpOnly: true,
     sameSite: "lax",
   };
