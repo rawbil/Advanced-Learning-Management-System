@@ -149,6 +149,8 @@ export const LoginUser = catchAsyncErrors(async (req: Request, res: Response, ne
       return next(new ErrorHandler("Invalid email or password", 400));
     }
 
+    
+
 
   } catch (error: any) {
     return next(new ErrorHandler(error.message, 400));
