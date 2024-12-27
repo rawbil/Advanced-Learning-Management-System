@@ -8,6 +8,7 @@ import ejs from "ejs";
 import nodemailer from "nodemailer";
 import path from "path";
 import sendMail from "../utils/sendMail";
+import { sendToken } from "../utils/jwt";
 
 //register user
 interface IRegistrationBody {
@@ -149,7 +150,8 @@ export const LoginUser = catchAsyncErrors(async (req: Request, res: Response, ne
       return next(new ErrorHandler("Invalid email or password", 400));
     }
 
-    
+    //call sendToken and set cookies
+    sendToken(user,200,res);
 
 
   } catch (error: any) {
