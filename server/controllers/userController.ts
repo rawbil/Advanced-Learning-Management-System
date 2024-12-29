@@ -172,3 +172,5 @@ export const LogoutUser = catchAsyncErrors(
     }
   }
 );
+
+//When you log out, you also need to delete the user from redis client
