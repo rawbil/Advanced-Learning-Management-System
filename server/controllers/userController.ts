@@ -165,8 +165,16 @@ export const LogoutUser = catchAsyncErrors(
     try {
       res.cookie("access_token", "", { maxAge: 1 }); //sets access_token cookie to an empty string and maxAge to 1 millisecond, effectively removing it.
       res.cookie("refresh_token", "", { maxAge: 1 });
-
-      redis.del(req.user?.id);
+      
+      const redisUser = req.user?._id;
+      if(redisUser) {
+        console.log(`Deleting user session from redis: ${redisUser}`);
+        await redis.del(redisUser.toString());
+      }   
+      else {
+        console.log("No user ID found");
+      }
+        
       res
         .status(200)
         .json({ success: true, message: "User logged out successfully" });
