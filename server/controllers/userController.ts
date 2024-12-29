@@ -9,6 +9,7 @@ import nodemailer from "nodemailer";
 import path from "path";
 import sendMail from "../utils/sendMail";
 import { sendToken } from "../utils/jwt";
+import { redis } from "../utils/redis";
 
 //register user
 interface IRegistrationBody {
@@ -164,6 +165,8 @@ export const LogoutUser = catchAsyncErrors(
     try {
       res.cookie("access_token", "", { maxAge: 1 }); //sets access_token cookie to an empty string and maxAge to 1 millisecond, effectively removing it.
       res.cookie("refresh_token", "", { maxAge: 1 });
+
+      redis.del(req.user?.id);
       res
         .status(200)
         .json({ success: true, message: "User logged out successfully" });
