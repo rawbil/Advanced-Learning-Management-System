@@ -10,7 +10,7 @@ export const authMiddleware = catchAsyncErrors(
     const access_token = req.cookies.access_token;
     if (!access_token) {
       return next(
-        new ErrorHandler("Authentication failed. Please login ", 400)
+        new ErrorHandler("Authentication failed. Please login ", 401)
       );
     }
 
@@ -19,7 +19,7 @@ export const authMiddleware = catchAsyncErrors(
       process.env.ACCESS_TOKEN as string
     ) as JwtPayload;
     if (!decoded) {
-      return next(new ErrorHandler("Access token is not valid", 400));
+      return next(new ErrorHandler("Access token is not valid", 401));
     }
     // req.id = decoded.id;
 
@@ -28,10 +28,21 @@ export const authMiddleware = catchAsyncErrors(
     //fetch user from redis
     const user = await redis.get(decoded.id);
     if (!user) {
-      return next(new ErrorHandler("User not found", 400));
+      return next(new ErrorHandler("User not found", 404));
     }
 
     req.user = JSON.parse(user);
     next();
   }
 );
+
+
+//validate user role
+export const authorizeRoles = (...roles: string[]) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        if(!roles.includes(req.user?.role || "")) {
+            return next(new ErrorHandler(`Role: ${req.user?.role} is not allowed to access this resource`, 403));
+        }
+        next();
+    }
+}

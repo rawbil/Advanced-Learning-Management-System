@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import { activateUser, LoginUser, LogoutUser, registerUser } from "../controllers/userController";
-import { authMiddleware } from "../middleware/authMiddleware";
+import { authMiddleware, authorizeRoles } from "../middleware/authMiddleware";
 
 //register user
 //api/v1/registration
