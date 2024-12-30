@@ -185,3 +185,20 @@ export const LogoutUser = catchAsyncErrors(
   }
 );
 
+
+
+//update access token using refresh token
+export const UpdateAccessToken = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const refreshToken = req.cookies.refresh_token;
+    if(!refreshToken) {
+      return next(new ErrorHandler("Refresh token not found", 401));
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN as string);
+
+
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 400))
+  }
+})
