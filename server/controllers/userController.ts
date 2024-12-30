@@ -2,13 +2,13 @@ import { Request, Response, NextFunction } from "express";
 import userModel, { IUser } from "../models/userModel";
 import ErrorHandler from "../utils/ErrorHandler";
 import catchAsyncErrors from "../middleware/catchAsyncErrors";
-import jwt, { Secret } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 require("dotenv").config();
 import ejs from "ejs";
 import nodemailer from "nodemailer";
 import path from "path";
 import sendMail from "../utils/sendMail";
-import { sendToken } from "../utils/jwt";
+import { accessTokenOptions, refreshTokenOptions, sendToken } from "../utils/jwt";
 import { redis } from "../utils/redis";
 
 //register user
@@ -165,17 +165,16 @@ export const LogoutUser = catchAsyncErrors(
     try {
       res.cookie("access_token", "", { maxAge: 1 }); //sets access_token cookie to an empty string and maxAge to 1 millisecond, effectively removing it.
       res.cookie("refresh_token", "", { maxAge: 1 });
-      
-     //When you log out, you also need to delete the user from redis client 
+
+      //When you log out, you also need to delete the user from redis client
       const redisUser = req.user?._id;
-      if(redisUser) {
+      if (redisUser) {
         console.log(`Deleting user session from redis: ${redisUser}`);
         await redis.del(redisUser.toString());
-      }   
-      else {
+      } else {
         console.log("No user ID found");
       }
-        
+
       res
         .status(200)
         .json({ success: true, message: "User logged out successfully" });
@@ -185,20 +184,50 @@ export const LogoutUser = catchAsyncErrors(
   }
 );
 
-
-
 //update access token using refresh token
-export const UpdateAccessToken = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
-  try {
-    const refreshToken = req.cookies.refresh_token;
-    if(!refreshToken) {
-      return next(new ErrorHandler("Refresh token not found", 401));
+export const UpdateAccessToken = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const refreshToken = req.cookies.refresh_token;
+      if (!refreshToken) {
+        return next(new ErrorHandler("Refresh token not found", 401));
+      }
+
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN as string
+      ) as JwtPayload;
+
+      if (!decoded) {
+        return next(new ErrorHandler("Refresh token not found", 400));
+      }
+
+      // const user = await userModel.findById(decoded.id);
+
+      const session = await redis.get(decoded.id);
+      if (!session) {
+        return next(new ErrorHandler("User does not exist", 401));
+      }
+
+      const user = JSON.parse(session);
+
+      const accessToken = jwt.sign({id: user._id}, process.env.ACCESS_TOKEN as string, {
+        expiresIn: "5m",
+      });
+
+      const refresh_token = jwt.sign({id: user._id}, process.env.REFRESH_TOKEN as string, {
+        expiresIn: "7d",
+      })
+
+      res.cookie("access_token",accessToken, accessTokenOptions)
+
+      res.cookie("refresh_token", refresh_token, refreshTokenOptions);
+
+      res.status(200).json({success: true, accessToken})
+
+    
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
     }
-
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN as string);
-
-
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 400))
   }
-})
+);

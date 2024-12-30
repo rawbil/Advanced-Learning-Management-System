@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { activateUser, LoginUser, LogoutUser, registerUser } from "../controllers/userController";
+import { activateUser, LoginUser, LogoutUser, registerUser, UpdateAccessToken } from "../controllers/userController";
 import { authMiddleware, authorizeRoles } from "../middleware/authMiddleware";
 
 //register user
@@ -18,5 +18,9 @@ router.post("/login", LoginUser);
 //logout user
 //api/v1/logout
 router.post("/logout", authMiddleware, LogoutUser);
+
+//update access token
+//api/v1/refresh-token
+router.post('/refresh-token', UpdateAccessToken);
 
 export default router;
