@@ -231,3 +231,16 @@ export const UpdateAccessToken = catchAsyncErrors(
     }
   }
 );
+
+
+//get use info
+/* export const GetUserInfo = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user: IUser = req.user as IUser;
+     
+
+
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 400))
+  }
+}) */

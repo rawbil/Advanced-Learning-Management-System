@@ -23,4 +23,8 @@ router.post("/logout", authMiddleware, LogoutUser);
 //api/v1/refresh-token
 router.post('/refresh-token', UpdateAccessToken);
 
+//get user info
+//api/v2/get-user
+//router.post('/get-user', authMiddleware, authorizeRoles("admin"), GetUserInfo);
+
 export default router;
