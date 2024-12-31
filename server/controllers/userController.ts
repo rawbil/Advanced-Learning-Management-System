@@ -244,3 +244,12 @@ export const UpdateAccessToken = catchAsyncErrors(
     return next(new ErrorHandler(error.message, 400))
   }
 }) */
+
+export const getUserInfo = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    
+    
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 400))
+  }
+})
