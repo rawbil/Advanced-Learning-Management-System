@@ -10,6 +10,7 @@ import path from "path";
 import sendMail from "../utils/sendMail";
 import { accessTokenOptions, refreshTokenOptions, sendToken } from "../utils/jwt";
 import { redis } from "../utils/redis";
+import { getUserById } from "../services/user.service";
 
 //register user
 interface IRegistrationBody {
@@ -232,24 +233,13 @@ export const UpdateAccessToken = catchAsyncErrors(
   }
 );
 
-
-//get use info
-/* export const GetUserInfo = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
-  try {
-    const user: IUser = req.user as IUser;
-     
-
-
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 400))
-  }
-}) */
-
+//get user info
 export const getUserInfo = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
   try {
-    
+    const userId = req.user?._id as string;
+    getUserById(userId, res);
     
   } catch (error: any) {
-    return next(new ErrorHandler(error.message, 400))
+    return next(new ErrorHandler(error.message, 400));
   }
 })
