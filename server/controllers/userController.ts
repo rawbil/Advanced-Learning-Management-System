@@ -8,7 +8,11 @@ import ejs from "ejs";
 import nodemailer from "nodemailer";
 import path from "path";
 import sendMail from "../utils/sendMail";
-import { accessTokenOptions, refreshTokenOptions, sendToken } from "../utils/jwt";
+import {
+  accessTokenOptions,
+  refreshTokenOptions,
+  sendToken,
+} from "../utils/jwt";
 import { redis } from "../utils/redis";
 import { getUserById } from "../services/user.service";
 
@@ -212,21 +216,27 @@ export const UpdateAccessToken = catchAsyncErrors(
 
       const user = JSON.parse(session);
 
-      const accessToken = jwt.sign({id: user._id}, process.env.ACCESS_TOKEN as string, {
-        expiresIn: "5m",
-      });
+      const accessToken = jwt.sign(
+        { id: user._id },
+        process.env.ACCESS_TOKEN as string,
+        {
+          expiresIn: "5m",
+        }
+      );
 
-      const refresh_token = jwt.sign({id: user._id}, process.env.REFRESH_TOKEN as string, {
-        expiresIn: "7d",
-      })
+      const refresh_token = jwt.sign(
+        { id: user._id },
+        process.env.REFRESH_TOKEN as string,
+        {
+          expiresIn: "7d",
+        }
+      );
 
-      res.cookie("access_token",accessToken, accessTokenOptions)
+      res.cookie("access_token", accessToken, accessTokenOptions);
 
       res.cookie("refresh_token", refresh_token, refreshTokenOptions);
 
-      res.status(200).json({success: true, accessToken})
-
-    
+      res.status(200).json({ success: true, accessToken });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
@@ -234,12 +244,38 @@ export const UpdateAccessToken = catchAsyncErrors(
 );
 
 //get user info
-export const getUserInfo = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.user?._id as string;
-    getUserById(userId, res);
-    
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 400));
+export const getUserInfo = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user?._id as string;
+      getUserById(userId, res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
   }
-})
+);
+
+interface ISocialAuthBody {
+  email: string,
+  name: string,
+  avatar: string,
+}
+
+//social auth
+//google/github/facebook signup
+export const SocialAuth = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, name, avatar } = req.body as ISocialAuthBody;
+      const user = await userModel.findOne({ email });
+      if (!user) {
+        const newUser = await userModel.create({ email, name, avatar });
+        sendToken(newUser, 200, res);
+      } else {
+        sendToken(user, 200, res);
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);

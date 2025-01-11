@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { activateUser, getUserInfo, LoginUser, LogoutUser, registerUser, UpdateAccessToken } from "../controllers/userController";
+import { activateUser, getUserInfo, LoginUser, LogoutUser, registerUser, SocialAuth, UpdateAccessToken } from "../controllers/userController";
 import { authMiddleware, authorizeRoles } from "../middleware/authMiddleware";
 
 //register user
@@ -26,5 +26,9 @@ router.post('/refresh-token', UpdateAccessToken);
 //get user info
 //api/v2/get-user
 router.get('/get-user', authMiddleware, getUserInfo);
+
+//social-auth
+//api/v2/social-auth
+router.post("/social-auth", SocialAuth);
 
 export default router;
