@@ -256,9 +256,9 @@ export const getUserInfo = catchAsyncErrors(
 );
 
 interface ISocialAuthBody {
-  email: string,
-  name: string,
-  avatar: string,
+  email: string;
+  name: string;
+  avatar: string;
 }
 
 //social auth
@@ -280,13 +280,12 @@ export const SocialAuth = catchAsyncErrors(
   }
 );
 
-
 //update user info
 interface IUpdateUserInfo {
-  name?: string,
-  email?: string
+  name?: string;
+  email?: string;
 }
-
+/* 
 export const UpdateUserInfo = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
   try {
     const {name, email} = req.body as IUpdateUserInfo;
@@ -310,4 +309,38 @@ export const UpdateUserInfo = catchAsyncErrors(async(req: Request, res: Response
   } catch (error: any) {
     return next(new ErrorHandler(error.message, 400));
   }
-})
+}) */
+
+export const UpdateUserInfo = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { name, email } = req.body;
+      const userId = req.user?._id;
+      const user = await userModel.findById(userId);
+      if (!user) {
+        return next(
+          new ErrorHandler(`user with id: ${userId} does not exist`, 404)
+        );
+      }
+
+      const isEmailExists = await userModel.findOne({ email });
+      if (isEmailExists) {
+        return next(new ErrorHandler("Email already exists", 409));
+      }
+
+      const updateData: IUpdateUserInfo = {};
+      if (name && user) updateData.name = name;
+      if (email && user) updateData.email = email;
+
+      const updatedUser = await userModel.findByIdAndUpdate(
+        userId,
+        updateData,
+        { new: true, runValidators: true }
+      );
+
+      res.status(200).json({ success: true, user: updatedUser });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
