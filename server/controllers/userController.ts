@@ -5,7 +5,7 @@ import catchAsyncErrors from "../middleware/catchAsyncErrors";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 require("dotenv").config();
 import ejs from "ejs";
-import nodemailer from "nodemailer";
+import cloudinary from "cloudinary";
 import path from "path";
 import sendMail from "../utils/sendMail";
 import {
@@ -385,6 +385,22 @@ export const UpdateUserPassword = catchAsyncErrors(async(req: Request, res: Resp
    await redis.set(userId, JSON.stringify(user));
    return res.status(201).json({success: true, user});
 
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 400));
+  }
+})
+
+// update user avatar
+interface IUpdateAvatar {
+  avatar: string,
+}
+
+
+export const UpdateUserAvatar = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {avatar} = req.body;
+    const user = req.user;
+    
   } catch (error: any) {
     return next(new ErrorHandler(error.message, 400));
   }
