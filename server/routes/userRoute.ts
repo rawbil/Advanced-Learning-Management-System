@@ -9,6 +9,7 @@ import {
   SocialAuth,
   UpdateAccessToken,
   UpdateUserInfo,
+  UpdateUserPassword,
 } from "../controllers/userController";
 import { authMiddleware, authorizeRoles } from "../middleware/authMiddleware";
 
@@ -42,6 +43,9 @@ router.post("/social-auth", SocialAuth);
 
 //update user info
 //api/v1/update-user
-router.post("/update-user", authMiddleware, UpdateUserInfo);
+router.put("/update-user", authMiddleware, UpdateUserInfo);
+
+//update user password
+router.put("/update-password", authMiddleware, UpdateUserPassword);
 
 export default router;

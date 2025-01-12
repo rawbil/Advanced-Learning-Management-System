@@ -15,6 +15,7 @@ import {
 } from "../utils/jwt";
 import { redis } from "../utils/redis";
 import { getUserById } from "../services/user.service";
+import bcrypt from 'bcrypt';
 
 //register user
 interface IRegistrationBody {
@@ -215,6 +216,7 @@ export const UpdateAccessToken = catchAsyncErrors(
       }
 
       const user = JSON.parse(session);
+      req.user = user;
 
       const accessToken = jwt.sign(
         { id: user._id },
@@ -346,3 +348,43 @@ export const UpdateUserInfo = catchAsyncErrors(
     }
   }
 );
+
+
+//update user password
+interface IUpdatePassword {
+  oldPassword: string,
+  newPassword: string,
+}
+
+export const UpdateUserPassword = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+  try {
+   const userId = req.user?._id as string;
+   const {newPassword, oldPassword} = req.body as IUpdatePassword;
+   const user = await userModel.findById(userId).select("+password");
+   if(!user) {
+    return next(new ErrorHandler(`user with id: ${userId} not found`, 404));
+   }
+
+   if(user.password === undefined) {
+    return next(new ErrorHandler("Invalid user", 400));
+   }
+
+   const isMatch = await user.comparePassword(oldPassword);
+   if(!isMatch) {
+    return next(new ErrorHandler("Old password is incorrect", 400));
+   }
+
+   const comparePasswords = await user.comparePassword(newPassword);
+   if(comparePasswords) {
+    return next(new ErrorHandler("The new password should be different from the old password", 400))
+   }
+
+   
+   user.password = newPassword;
+   await user.save();
+   return res.status(201).json({success: true, user});
+
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 400));
+  }
+})
