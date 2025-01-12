@@ -1,6 +1,15 @@
 import express from "express";
 const router = express.Router();
-import { activateUser, getUserInfo, LoginUser, LogoutUser, registerUser, SocialAuth, UpdateAccessToken } from "../controllers/userController";
+import {
+  activateUser,
+  getUserInfo,
+  LoginUser,
+  LogoutUser,
+  registerUser,
+  SocialAuth,
+  UpdateAccessToken,
+  UpdateUserInfo,
+} from "../controllers/userController";
 import { authMiddleware, authorizeRoles } from "../middleware/authMiddleware";
 
 //register user
@@ -21,14 +30,18 @@ router.post("/logout", authMiddleware, LogoutUser);
 
 //update access token
 //api/v1/refresh-token
-router.post('/refresh-token', UpdateAccessToken);
+router.post("/refresh-token", UpdateAccessToken);
 
 //get user info
-//api/v2/get-user
-router.get('/get-user', authMiddleware, getUserInfo);
+//api/v1/get-user
+router.get("/get-user", authMiddleware, getUserInfo);
 
 //social-auth
-//api/v2/social-auth
+//api/v1/social-auth
 router.post("/social-auth", SocialAuth);
+
+//update user info
+//api/v1/update-user
+router.post("/update-user", authMiddleware, UpdateUserInfo);
 
 export default router;
