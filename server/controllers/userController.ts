@@ -279,3 +279,35 @@ export const SocialAuth = catchAsyncErrors(
     }
   }
 );
+
+
+//update user info
+interface IUpdateUserInfo {
+  name?: string,
+  email?: string
+}
+
+export const UpdateUserInfo = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {name, email} = req.body as IUpdateUserInfo;
+    const userId = req.user?._id as string;
+    const user = await userModel.findById(userId);
+    if(email && user) {
+      const isEmailExists = await userModel.findOne({email});
+      if(isEmailExists) {
+        return next(new ErrorHandler("Email already exists", 409));
+      }
+      user.email = email;
+
+    }
+
+    if(name && user) {
+      user.name = name;
+    }
+
+    await user?.save()
+    
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 400));
+  }
+})
