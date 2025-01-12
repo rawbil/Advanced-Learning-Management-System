@@ -315,7 +315,7 @@ export const UpdateUserInfo = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email } = req.body;
-      const userId = req.user?._id;
+      const userId = req.user?._id as string;
       const user = await userModel.findById(userId);
       if (!user) {
         return next(
@@ -338,7 +338,9 @@ export const UpdateUserInfo = catchAsyncErrors(
         { new: true, runValidators: true }
       );
 
-      res.status(200).json({ success: true, user: updatedUser });
+      redis.set(userId, JSON.stringify(updatedUser))
+
+      res.status(200).json({ success: true, updatedUser });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
