@@ -399,13 +399,3 @@ interface IUpdateAvatar {
   avatar: string;
 }
 
-export const UpdateUserAvatar = catchAsyncErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { avatar } = req.body;
-      const user = req.user;
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
-    }
-  }
-);
