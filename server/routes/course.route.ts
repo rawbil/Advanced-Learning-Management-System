@@ -10,9 +10,9 @@ route.post(
   authorizeRoles("admin"),
   UploadCourse
 );
-//api/v1/edit-course
+//api/v1/edit-course/id
 route.put(
-  "/edit-course",
+  "/edit-course/:id",
   authMiddleware,
   authorizeRoles("admin"),
   EditCourse
