@@ -18,7 +18,7 @@ route.put(
   EditCourse
 );
 //api/v1/course/id
-route.put(
+route.get(
   "/get-course/:id",
   authMiddleware,
   authorizeRoles("admin"),
