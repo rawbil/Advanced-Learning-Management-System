@@ -72,13 +72,16 @@ export const EditCourse = catchAsyncErrors(
             public_id: myCloud.public_id,
             url: myCloud.secure_url,
           };
-
         }
       }
 
-      const updatedCourse = await courseModel.findByIdAndUpdate(courseId, {
-        $set: data
-      }, {new: true, runValidators: true})
+      const updatedCourse = await courseModel.findByIdAndUpdate(
+        courseId,
+        {
+          $set: data,
+        },
+        { new: true, runValidators: true }
+      );
 
       /* 
       --Explanation
@@ -106,63 +109,68 @@ export const EditCourse = catchAsyncErrors(
       );
        */
 
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: "Course updated successfully",
-          updatedCourse,
-        });
+      res.status(200).json({
+        success: true,
+        message: "Course updated successfully",
+        updatedCourse,
+      });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
   }
 );
 
-
 //get single course --without purchasing
-export const getSingleCourse = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+export const getSingleCourse = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const courseId = req.params.id;
-        //check if course is already cached in redis
-        const isCacheExist = await redis.get(courseId);
-        if(isCacheExist) {
-            const course = JSON.parse(isCacheExist);
-            res.status(200).json({success: true, course})
-        } else {
-              const course = await courseModel.findById(req.params.id).select("-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links");// without purchasing the course, we limit the data the user gets. Only after purchasing the course will the user get all the course details
+      const courseId = req.params.id;
+      //check if course is already cached in redis
+      const isCacheExist = await redis.get(courseId);
+      if (isCacheExist) {
+        const course = JSON.parse(isCacheExist);
+        res.status(200).json({ success: true, course });
+      } else {
+        const course = await courseModel
+          .findById(req.params.id)
+          .select(
+            "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
+          ); // without purchasing the course, we limit the data the user gets. Only after purchasing the course will the user get all the course details
 
-              //add course session to redis
-              await redis.set(courseId, JSON.stringify(course));
-        
-        res.status(201).json({success: true, course, message: "Course fetched."});
-        }
+        //add course session to redis
+        await redis.set(courseId, JSON.stringify(course));
 
-      
+        res
+          .status(201)
+          .json({ success: true, course, message: "Course fetched." });
+      }
     } catch (error: any) {
-       return next(new ErrorHandler(error.message, 500)); 
+      return next(new ErrorHandler(error.message, 500));
     }
-})
-
+  }
+);
 
 //get all courses --without purchasing
-export const getAllCourses = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+export const getAllCourses = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const isCacheExist = await redis.get("allCourses");
-        if(isCacheExist) {
-            const courses = JSON.parse(isCacheExist);
-            res.status(200).json({success: true, courses});
-        } else {
-             const courses = await courseModel.find().select("-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links");
+      const isCacheExist = await redis.get("allCourses");
+      if (isCacheExist) {
+        const courses = JSON.parse(isCacheExist);
+        res.status(200).json({ success: true, courses });
+      } else {
+        const courses = await courseModel
+          .find()
+          .select(
+            "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
+          );
 
-             await redis.set("allCourses", JSON.stringify(courses));
+        await redis.set("allCourses", JSON.stringify(courses));
 
-        res.status(201).json({success: true, courses}); 
-        }
-
-      
-        
+        res.status(201).json({ success: true, courses });
+      }
     } catch (error: any) {
-       return next(new ErrorHandler(error.message, 500)); 
+      return next(new ErrorHandler(error.message, 500));
     }
-})
+  }
+);
