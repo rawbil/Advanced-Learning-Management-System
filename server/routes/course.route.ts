@@ -18,10 +18,9 @@ route.put(
   EditCourse
 );
 //api/v1/course/id
+//all users can access this route
 route.get(
   "/get-course/:id",
-  authMiddleware,
-  authorizeRoles("admin"),
   getSingleCourse
 );
 export default route;
