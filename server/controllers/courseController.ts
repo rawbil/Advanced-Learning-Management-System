@@ -174,3 +174,24 @@ export const getAllCourses = catchAsyncErrors(
     }
   }
 );
+
+//get single course -- valid user
+export const getCourseByUser = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+    try {
+        const courseId = req.params.id;
+        const userCourseList = req.user?.courses;
+        const courseExists = userCourseList?.find((course: any) => courseId === course._id as string);
+        if(!courseExists) {
+            return next(new ErrorHandler("You are not eligible for this course", 404));
+        }
+
+        const course = await courseModel.findById(courseId);
+        const content = course?.courseData;
+
+        res.status(200).json({success: true, content});
+
+        
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+      }
+})
