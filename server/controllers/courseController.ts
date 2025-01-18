@@ -53,23 +53,35 @@ export const EditCourse = catchAsyncErrors(
       if (thumbnail) {
         if (course.thumbnail.public_id) {
           await cloudinary.v2.uploader.destroy(course.thumbnail.public_id);
+
+          const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
+            folder: "courses",
+          });
+
+          data.thumbnail = {
+            public_id: myCloud.public_id,
+            url: myCloud.secure_url,
+          };
+        } else {
+          const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
+            folder: "courses",
+          });
+
+          data.thumbnail = {
+            public_id: myCloud.public_id,
+            url: myCloud.secure_url,
+          };
+
         }
-
-        const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
-          folder: "courses",
-        });
-
-        course.thumbnail = {
-          public_id: myCloud.public_id,
-          url: myCloud.secure_url,
-        };
       }
 
-      await course.save();
+      const updatedCourse = await courseModel.findByIdAndUpdate(courseId, {
+        $set: data
+      }, {new: true, runValidators: true})
 
       /* 
       -Also, instead of updating the course from the database directly, you can update the data object, then use $set to add it to the database
-      
+
           // Upload the new thumbnail to Cloudinary
         const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
           folder: "courses",
@@ -92,7 +104,13 @@ export const EditCourse = catchAsyncErrors(
       );
        */
 
-      res.status(200).json({success: true, message: "Course updated successfully", course});
+      res
+        .status(200)
+        .json({
+          success: true,
+          message: "Course updated successfully",
+          updatedCourse,
+        });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
