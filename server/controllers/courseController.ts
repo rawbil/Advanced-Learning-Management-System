@@ -80,7 +80,8 @@ export const EditCourse = catchAsyncErrors(
       }, {new: true, runValidators: true})
 
       /* 
-      -Also, instead of updating the course from the database directly, you can update the data object, then use $set to add it to the database
+      --Explanation
+      instead of updating the course from the database directly, you can update the data object, then use $set to add it to the database
 
           // Upload the new thumbnail to Cloudinary
         const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
