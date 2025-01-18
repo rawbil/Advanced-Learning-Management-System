@@ -36,7 +36,10 @@ interface ICourse extends Document {
   description: string;
   price: number;
   estimatedPrice: number;
-  thumbnail: object;
+  thumbnail: {
+    public_id: string,
+    url: string,
+  };
   tags: string;
   level: string;
   demoUrl: string;
@@ -106,14 +109,12 @@ const courseSchema = new Schema<ICourse>({
   estimatedPrice: Number,
 
   thumbnail: {
-    type: {
-      public_id: {
-        type: String,
-      },
-      url: {
-        type: String,
-      },
-    },
+   public_id: {
+    type: String,
+   },
+   url: {
+    type: String,
+   }
   },
 
   tags: {
