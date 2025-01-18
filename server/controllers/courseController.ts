@@ -3,6 +3,7 @@ import catchAsyncErrors from "../middleware/catchAsyncErrors";
 import ErrorHandler from "../utils/ErrorHandler";
 import cloudinary from "cloudinary";
 import courseModel from "../models/courseModel";
+import { redis } from "../utils/redis";
 
 //upload course
 export const UploadCourse = catchAsyncErrors(
@@ -122,6 +123,14 @@ export const EditCourse = catchAsyncErrors(
 //get single course --without purchasing
 export const getSingleCourse = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
     try {
+        const courseId = req.params.id;
+        //check if course is already cached in redis
+        const isCacheExist = await redis.get(courseId);
+        if(isCacheExist) {
+            const course = JSON.parse(isCacheExist);
+            res.status(200).json({success: true, course})
+        }
+
         const course = await courseModel.findById(req.params.id).select("-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links");// without purchasing the course, we limit the data the user gets. Only after purchasing the course will the user get all the course details
         
         res.status(201).json({success: true, course, message: "Course fetched."});
