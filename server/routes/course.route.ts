@@ -1,5 +1,5 @@
 import express from "express";
-import { EditCourse, getSingleCourse, UploadCourse } from "../controllers/courseController";
+import { EditCourse, getAllCourses, getSingleCourse, UploadCourse } from "../controllers/courseController";
 import { authMiddleware, authorizeRoles } from "../middleware/authMiddleware";
 const route = express.Router();
 
@@ -22,5 +22,11 @@ route.put(
 route.get(
   "/get-course/:id",
   getSingleCourse
+);
+//api/v1/courses
+//all users can access this route
+route.get(
+  "/courses",
+  getAllCourses
 );
 export default route;

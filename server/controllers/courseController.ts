@@ -28,7 +28,7 @@ export const UploadCourse = catchAsyncErrors(
         message: "Course created successfully",
       });
     } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
+      return next(new ErrorHandler(error.message, 500));
     }
   }
 );
@@ -113,7 +113,7 @@ export const EditCourse = catchAsyncErrors(
           updatedCourse,
         });
     } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
+      return next(new ErrorHandler(error.message, 500));
     }
   }
 );
@@ -126,7 +126,7 @@ export const getSingleCourse = catchAsyncErrors(async(req: Request, res: Respons
         
         res.status(201).json({success: true, course, message: "Course fetched."});
     } catch (error: any) {
-       return next(new ErrorHandler(error.message, 400)); 
+       return next(new ErrorHandler(error.message, 500)); 
     }
 })
 
@@ -134,8 +134,9 @@ export const getSingleCourse = catchAsyncErrors(async(req: Request, res: Respons
 //get all courses --without purchasing
 export const getAllCourses = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
     try {
+        const courses = await courseModel.find()
         
     } catch (error: any) {
-       return next(new ErrorHandler(error.message, 400)); 
+       return next(new ErrorHandler(error.message, 500)); 
     }
 })
