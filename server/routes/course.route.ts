@@ -1,5 +1,5 @@
 import express from "express";
-import { EditCourse, UploadCourse } from "../controllers/courseController";
+import { EditCourse, getSingleCourse, UploadCourse } from "../controllers/courseController";
 import { authMiddleware, authorizeRoles } from "../middleware/authMiddleware";
 const route = express.Router();
 
@@ -17,5 +17,11 @@ route.put(
   authorizeRoles("admin"),
   EditCourse
 );
-
+//api/v1/course/id
+route.put(
+  "/get-course/:id",
+  authMiddleware,
+  authorizeRoles("admin"),
+  getSingleCourse
+);
 export default route;

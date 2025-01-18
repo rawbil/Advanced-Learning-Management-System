@@ -117,3 +117,25 @@ export const EditCourse = catchAsyncErrors(
     }
   }
 );
+
+
+//get single course --without purchasing
+export const getSingleCourse = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+    try {
+        const course = await courseModel.findById(req.params.id).select("-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links");// without purchasing the course, we limit the data the user gets. Only after purchasing the course will the user get all the course details
+        
+        res.status(201).json({success: true, course, message: "Course fetched."});
+    } catch (error: any) {
+       return next(new ErrorHandler(error.message, 400)); 
+    }
+})
+
+
+//get all courses --without purchasing
+export const getAllCourses = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+    try {
+        
+    } catch (error: any) {
+       return next(new ErrorHandler(error.message, 400)); 
+    }
+})
