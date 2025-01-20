@@ -73,7 +73,7 @@ const linkSchema = new Schema<ILink>({
 const commentSchema = new Schema<IComment>({
   user: Object,
   question: String,
-  questionReplies: [Object],
+  questionReplies  : [Object],
 });
 
 //course data schema
