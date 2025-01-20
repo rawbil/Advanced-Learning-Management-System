@@ -4,6 +4,7 @@ import ErrorHandler from "../utils/ErrorHandler";
 import cloudinary from "cloudinary";
 import courseModel from "../models/courseModel";
 import { redis } from "../utils/redis";
+import mongoose from "mongoose";
 
 //upload course
 export const UploadCourse = catchAsyncErrors(
@@ -194,4 +195,39 @@ export const getCourseByUser = catchAsyncErrors(async(req: Request, res: Respons
     } catch (error: any) {
         return next(new ErrorHandler(error.message, 500));
       }
+})
+
+//add question in course
+interface IAddQuestionData {
+    question: string,
+    courseId: string,
+    contentId: string,
+}
+
+export const addQuestion = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {question, courseId, contentId} = req.body as IAddQuestionData;
+        const course = await courseModel.findById(courseId);
+
+        if(!mongoose.Types.ObjectId.isValid(contentId)) {
+            return next(new ErrorHandler("Invalid content id", 400));
+        }
+
+        const courseContent = course?.courseData.find((content: any) => content._id.toString() === contentId); 
+        if(!courseContent) {
+            return next(new ErrorHandler("Invalid content id", 404)); 
+        }
+
+        //create a new question object
+        const newQuestion: any = {
+            user: req.user,
+            question,
+            questionReplies: []
+        }
+        //add the question to the course content
+        courseContent.questions.push(newQuestion)
+        
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
 })
