@@ -180,7 +180,7 @@ export const getCourseByUser = catchAsyncErrors(async(req: Request, res: Respons
     try {
         const courseId = req.params.id;
         const userCourseList = req.user?.courses;
-        const courseExists = userCourseList?.find((course: any) => courseId === course._id as string);
+        const courseExists = userCourseList?.find((course: any) => course._id.toString() === courseId);
         if(!courseExists) {
             return next(new ErrorHandler("You are not eligible for this course", 404));
         }

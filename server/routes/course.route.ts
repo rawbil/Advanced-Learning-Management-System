@@ -31,6 +31,6 @@ route.get(
 );
 //api/v1/course-content/id
 //only for valid users
-route.get('/course-content', getCourseByUser);
+route.get('/course-content/:id',authMiddleware, getCourseByUser);
 
 export default route;
