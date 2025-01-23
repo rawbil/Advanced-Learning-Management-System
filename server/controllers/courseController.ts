@@ -5,6 +5,10 @@ import cloudinary from "cloudinary";
 import courseModel from "../models/courseModel";
 import { redis } from "../utils/redis";
 import mongoose from "mongoose";
+import ejs from 'ejs';
+import path from "path";
+import sendMail from "../utils/sendMail";
+require('dotenv').config();
 
 //upload course
 export const UploadCourse = catchAsyncErrors(
@@ -275,7 +279,30 @@ export const AddAnswer = catchAsyncErrors(async(req: Request, res: Response, nex
     question.questionReplies?.push(questionReply);
 
     await course?.save();
+
+    //notification to the owner of the email
+    if(req.user?._id ===  question.user._id) {
+      //create notification
+    } else {
+      const data = {
+        name: question.user.name,
+        title: content.title
+      }
+      const html = await ejs.renderFile(path.join(__dirname, '../mails/question-reply.ejs'), data);
+
+      try {
+        await sendMail({
+          email: question.user.email,
+          subject: "Question Reply",
+          data,
+          template: "question-reply.ejs",
+        })
+      } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+      }
+    }
     
+    res.status(200).json({success: true, course})
     
   } catch (error: any) {
     return next(new ErrorHandler(error.message, 500));
