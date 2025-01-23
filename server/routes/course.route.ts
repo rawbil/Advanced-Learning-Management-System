@@ -1,5 +1,5 @@
 import express from "express";
-import { addQuestion, EditCourse, getAllCourses, getCourseByUser, getSingleCourse, UploadCourse } from "../controllers/courseController";
+import { AddAnswer, addQuestion, EditCourse, getAllCourses, getCourseByUser, getSingleCourse, UploadCourse } from "../controllers/courseController";
 import { authMiddleware, authorizeRoles } from "../middleware/authMiddleware";
 const route = express.Router();
 
@@ -34,6 +34,9 @@ route.get(
 route.get('/course-content/:id',authMiddleware, getCourseByUser);
 //add question
 //api/v1/add-question
-route.post('/add-question', authMiddleware, addQuestion);
+route.put('/add-question', authMiddleware, addQuestion);
+//add answer
+//api/v1/add-answer
+route.put("/add-answer", authMiddleware, AddAnswer);
 
 export default route;
