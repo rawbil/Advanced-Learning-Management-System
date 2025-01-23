@@ -188,7 +188,7 @@ export const getCourseByUser = catchAsyncErrors(
       if (!courseExists) {
         return next(
           new ErrorHandler("You are not eligible for this course", 404)
-        );
+        );  
       }
 
       const course = await courseModel.findById(courseId);
@@ -243,3 +243,41 @@ export const addQuestion = catchAsyncErrors(
     }
   }
 );
+
+
+//add answer in course question
+interface IAddAnswer {
+  courseId: string,
+  contentId: string,
+  questionId: string,
+  answer: string,
+}
+
+export const AddAnswer = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {courseId, contentId, questionId, answer} = req.body as IAddAnswer;
+    const course = await courseModel.findById(courseId);
+    const content = course?.courseData.find((content: any) => content._id === contentId);
+    if(!content) {
+      return next(new ErrorHandler("Content not found", 404));
+    };
+
+    const question = content.questions.find((quiz: any) => quiz._id === questionId);
+    if(!question) {
+      return next(new ErrorHandler("Question not found", 404));
+    }
+
+    const questionReply: any = {
+      user: req.user,
+      answer,
+    }
+
+    question.questionReplies?.push(questionReply);
+
+    await course?.save();
+    
+    
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+})

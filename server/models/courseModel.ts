@@ -3,7 +3,7 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 interface IComment extends Document {
   user: object;
   question: string;
-  questionReplies: IComment[];
+  questionReplies?: IComment[];
 }
 
 interface IReview extends Document {
