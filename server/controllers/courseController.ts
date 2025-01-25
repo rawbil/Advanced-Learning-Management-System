@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import ejs from 'ejs';
 import path from "path";
 import sendMail from "../utils/sendMail";
+import { IUser } from "../models/userModel";
 require('dotenv').config();
 
 //upload course
@@ -308,3 +309,82 @@ export const AddAnswer = catchAsyncErrors(async(req: Request, res: Response, nex
     return next(new ErrorHandler(error.message, 500));
   }
 })
+
+//add review in course
+interface IReviewData {
+  review: string,
+  rating: number,
+}
+
+export const AddCourseReview = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+  try {
+   const courseId = req.params.id;
+   const userCourseList = req.user?.courses;
+   const courseExists = userCourseList?.find((course: any) => course._id.toString() === courseId);
+   if(!courseExists) {
+    return next(new ErrorHandler("You are not eligible to access this course ", 404));
+   }
+
+   const course = await courseModel.findById(courseId);
+
+   const {review, rating}: IReviewData = req.body;
+
+   const reviewData: any = {
+    user: req.user as IUser,
+    comment: review,
+    rating,
+   }
+
+   course?.reviews.push(reviewData);
+
+   let totalReviews = 0;
+   course?.reviews.forEach((rev: any) => {
+    totalReviews += rev.rating;
+   })
+
+   if (course) {
+     course.ratings = totalReviews / course.reviews.length;
+   }
+   await course?.save();
+
+   const notification = {
+    title: "New Review Received",
+    message: `${req.user?.name} added a review in the course: ${course?.name}`
+   }
+
+   //create notification
+
+   res.status(200).json({success: true, course});
+
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500));
+  } 
+})
+
+/* //add review reply
+export const AddReviewReply = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {answer, reviewId} = req.body;
+    const courseId = req.params.id;
+    const course = await courseModel.findById(courseId);
+    if(!course) {
+      return next(new ErrorHandler(`Course with id: ${courseId} not found`, 404));
+    }
+
+    const review = course.reviews.find((item: any) => item._id.toString() === reviewId);
+    if(!review) {
+      return next(new ErrorHandler("Course review not found", 404));
+    }
+
+    const reviewReply: any = {
+      user: req.user,
+      answer,
+    }
+
+    review.commentReplies?.push(reviewReply);
+    await course.save();
+    
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500));
+  } 
+}) */
