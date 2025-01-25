@@ -39,7 +39,7 @@ route.put('/add-question', authMiddleware, addQuestion);
 //api/v1/add-answer
 route.put("/add-answer", authMiddleware, AddAnswer);
 //add review
-//api/v2/add-course-review
-route.put('add-course-review', authMiddleware, AddCourseReview);
+//api/v1/add-review/:id
+route.put('/add-review/:id', authMiddleware, AddCourseReview);
 
 export default route;
