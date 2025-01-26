@@ -361,30 +361,36 @@ export const AddCourseReview = catchAsyncErrors(async(req: Request, res: Respons
   } 
 })
 
-/* //add review reply
+//add review reply --only admin can reply to review
+interface IReviewReply {
+  courseId: string,
+  reviewId: string,
+  comment: string,
+}
 export const AddReviewReply = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const {answer, reviewId} = req.body;
-    const courseId = req.params.id;
+    const {reviewId, comment, courseId} = req.body as IReviewReply;
+
     const course = await courseModel.findById(courseId);
     if(!course) {
-      return next(new ErrorHandler(`Course with id: ${courseId} not found`, 404));
+      return next(new ErrorHandler("Course not found", 404));
     }
 
-    const review = course.reviews.find((item: any) => item._id.toString() === reviewId);
-    if(!review) {
-      return next(new ErrorHandler("Course review not found", 404));
+    const courseReview = course?.reviews.find((review: any) => review._id.toString() === reviewId);
+    if(!courseReview) {
+      return next(new ErrorHandler("Review not found", 404))
     }
-
-    const reviewReply: any = {
+    const newReview: any = {
       user: req.user,
-      answer,
+      comment,
     }
 
-    review.commentReplies?.push(reviewReply);
-    await course.save();
+    courseReview?.commentReplies?.push(newReview)
+    await course?.save();
+
+    res.status(200).json({success: true, course}); 
     
   } catch (error: any) {
     return next(new ErrorHandler(error.message, 500));
   } 
-}) */
+})

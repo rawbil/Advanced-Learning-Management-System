@@ -1,5 +1,5 @@
 import express from "express";
-import { AddAnswer, AddCourseReview, addQuestion, EditCourse, getAllCourses, getCourseByUser, getSingleCourse, UploadCourse } from "../controllers/courseController";
+import { AddAnswer, AddCourseReview, addQuestion, AddReviewReply, EditCourse, getAllCourses, getCourseByUser, getSingleCourse, UploadCourse } from "../controllers/courseController";
 import { authMiddleware, authorizeRoles } from "../middleware/authMiddleware";
 const route = express.Router();
 
@@ -41,5 +41,8 @@ route.put("/add-answer", authMiddleware, AddAnswer);
 //add review
 //api/v1/add-review/:id
 route.put('/add-review/:id', authMiddleware, AddCourseReview);
+//add review reply
+//api/v1/add-review-reply
+route.put("/add-review-reply", authMiddleware, authorizeRoles("admin"), AddReviewReply);
 
 export default route;
