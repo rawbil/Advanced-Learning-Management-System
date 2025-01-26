@@ -62,6 +62,7 @@ const reviewSchema: Schema<IReview> = new mongoose.Schema({
   comment: {
     type: String,
   },
+  commentReplies: [Object]
 });
 
 //link schema

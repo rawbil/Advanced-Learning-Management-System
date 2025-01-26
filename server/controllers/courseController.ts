@@ -314,6 +314,7 @@ export const AddAnswer = catchAsyncErrors(async(req: Request, res: Response, nex
 interface IReviewData {
   review: string,
   rating: number,
+  commentReplies: []
 }
 
 export const AddCourseReview = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
@@ -333,6 +334,7 @@ export const AddCourseReview = catchAsyncErrors(async(req: Request, res: Respons
     user: req.user as IUser,
     comment: review,
     rating,
+    commentReplies: []
    }
 
    course?.reviews.push(reviewData);
