@@ -44,5 +44,7 @@ route.put('/add-review/:id', authMiddleware, AddCourseReview);
 //add review reply
 //api/v1/add-review-reply
 route.put("/add-review-reply", authMiddleware, authorizeRoles("admin"), AddReviewReply);
+//delete review
+
 
 export default route;
