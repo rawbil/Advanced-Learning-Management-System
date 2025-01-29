@@ -36,7 +36,7 @@ export const createOrder = catchAsyncErrors(
         payment_info,
       };
 
-       await orderModel.create(orderData);
+      const order = await orderModel.create(orderData);
       //send email
       const mailData = {
         order: {
@@ -67,8 +67,8 @@ export const createOrder = catchAsyncErrors(
         return next(new ErrorHandler(error.message, 500));
       }
 
-      user?.courses.push({ courseId });
-      user?.save();
+      user?.courses.push({ _id: courseId });
+      await user?.save();
 
       //send notification to admin, saying order was created
       await notificationModel.create({
@@ -76,7 +76,17 @@ export const createOrder = catchAsyncErrors(
         message: `You have a new order from ${course.name}`,
       });
 
-      res.status(200).json({ success: true, order: course });
+      if (course.purchased === undefined) {
+        course.purchased = 1;
+      } else if (course.purchased === 0) {
+        course.purchased = 1;
+      } else {
+        course.purchased += 1;
+      }
+      course?.save();
+      //await courseModel.findByIdAndUpdate(courseId, { $inc: { purchased: 1 } });
+
+      res.status(200).json({ success: true, order, course });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
