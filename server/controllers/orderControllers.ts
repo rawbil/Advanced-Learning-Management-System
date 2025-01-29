@@ -5,8 +5,9 @@ import ErrorHandler from "../utils/ErrorHandler";
 import userModel from "../models/userModel";
 import courseModel from "../models/courseModel";
 import path from "path";
-import ejs from 'ejs';
+import ejs from "ejs";
 import sendMail from "../utils/sendMail";
+import notificationModel from "../models/notificationModel";
 
 //create order
 export const createOrder = catchAsyncErrors(
@@ -32,31 +33,50 @@ export const createOrder = catchAsyncErrors(
       const orderData = {
         courseId: course._id,
         userId: user?._id,
+        payment_info,
       };
 
       const newOrder = await orderModel.create(orderData);
       //send email
       const mailData = {
         order: {
-            _id: course.id.slice(0, 6),
-            name: course.name,
-            price: course.price,
-            date: new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'} )
-        }
-      }
+          _id: course.id.slice(0, 6),
+          name: course.name,
+          price: course.price,
+          date: new Date().toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+        },
+      };
 
-      const html = await ejs.renderFile(path.join(__dirname, '../mails/order-confirmation.ejs'), mailData);
+      const html = await ejs.renderFile(
+        path.join(__dirname, "../mails/order-confirmation.ejs"),
+        mailData
+      );
+      //send email
       try {
         await sendMail({
-            subject: "Order Confirmation👌",
-            template: "order-confirmation.ejs",
-            email: user?.email as string,
-            data: mailData
-        })
+          subject: "Order Confirmation👌",
+          template: "order-confirmation.ejs",
+          email: user?.email as string,
+          data: mailData,
+        });
       } catch (error: any) {
         return next(new ErrorHandler(error.message, 500));
       }
-    
+
+      user?.courses.push({ courseId });
+      user?.save();
+
+      //send notification to admin, saying order was created
+      await notificationModel.create({
+        title: "New Order",
+        message: `You have a new order from ${course.name}`,
+      });
+
+      res.status(200).json({ success: true, order: course });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
