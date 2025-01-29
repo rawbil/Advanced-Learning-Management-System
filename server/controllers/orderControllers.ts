@@ -13,7 +13,7 @@ import notificationModel from "../models/notificationModel";
 export const createOrder = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.user?.id;
+      const userId = req.user?._id;
       const { courseId, payment_info } = req.body as IOrder;
       //find user
       const user = await userModel.findById(userId);
@@ -36,7 +36,7 @@ export const createOrder = catchAsyncErrors(
         payment_info,
       };
 
-      const newOrder = await orderModel.create(orderData);
+       await orderModel.create(orderData);
       //send email
       const mailData = {
         order: {
