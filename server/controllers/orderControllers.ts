@@ -71,7 +71,7 @@ export const createOrder = catchAsyncErrors(
       await user?.save();
 
       //send notification to admin, saying order was created
-      await notificationModel.create({
+     const notification = await notificationModel.create({
         title: "New Order",
         message: `You have a new order from ${course.name}`,
       });
@@ -86,9 +86,10 @@ export const createOrder = catchAsyncErrors(
       course?.save();
       //await courseModel.findByIdAndUpdate(courseId, { $inc: { purchased: 1 } });
 
-      res.status(200).json({ success: true, order, course });
+      res.status(200).json({ success: true, order, course, notification });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
   }
 );
+
