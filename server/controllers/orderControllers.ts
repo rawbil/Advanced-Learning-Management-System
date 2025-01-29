@@ -1,2 +1,64 @@
 import { Request, Response, NextFunction } from "express";
-import orderModel from "../models/orderModel";
+import orderModel, { IOrder } from "../models/orderModel";
+import catchAsyncErrors from "../middleware/catchAsyncErrors";
+import ErrorHandler from "../utils/ErrorHandler";
+import userModel from "../models/userModel";
+import courseModel from "../models/courseModel";
+import path from "path";
+import ejs from 'ejs';
+import sendMail from "../utils/sendMail";
+
+//create order
+export const createOrder = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user?.id;
+      const { courseId, payment_info } = req.body as IOrder;
+      //find user
+      const user = await userModel.findById(userId);
+      //check if user already purchased this course
+      const userCourseList = user?.courses.find(
+        (course: any) => course._id.toString() === courseId
+      );
+      if (userCourseList) {
+        return next(new ErrorHandler("Course already purchased", 400));
+      }
+
+      const course = await courseModel.findById(courseId);
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
+
+      const orderData = {
+        courseId: course._id,
+        userId: user?._id,
+      };
+
+      const newOrder = await orderModel.create(orderData);
+      //send email
+      const mailData = {
+        order: {
+            _id: course.id.slice(0, 6),
+            name: course.name,
+            price: course.price,
+            date: new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'} )
+        }
+      }
+
+      const html = await ejs.renderFile(path.join(__dirname, '../mails/order-confirmation.ejs'), mailData);
+      try {
+        await sendMail({
+            subject: "Order Confirmation👌",
+            template: "order-confirmation.ejs",
+            email: user?.email as string,
+            data: mailData
+        })
+      } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+      }
+    
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);

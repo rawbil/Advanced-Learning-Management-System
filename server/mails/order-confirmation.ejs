@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Confirmation</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="message">
+        <h1>Your LMS order is confirmed</h1>
+        <br />
+        <div class="course-info">
+          <h4>Here's what you ordered:</h4>
+          <table>
+            <tr>
+              <td>Order#: <%= order._id %></td>
+              <td>Order date: <%= order.date %></td>
+            </tr>
+          </table>
+          <table>
+            <tr>
+              <td>Item</td>
+              <td>Qty</td>
+              <td>cost</td>
+            </tr>
+          </table>
+          <table>
+            <tr>
+                <td><%= order.name %></td>
+                <td>1</td>
+                <td>$<%= order.price %></td>
+            </tr>
+          </table>
+          <table>
+            <tr>
+                <td>Subtotal: </td>
+                <td>$<%= order.price %></td>
+            </tr>
+          </table>
+          <table>
+            <tr>
+                <td>Total: </td>
+                <td>$<%= order.price %></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="footer">
+        <p>If you have any questions, please contact our support team at <a href="mailto:bildadsimiyu6@gmail.com">support@LMS.com</a></p>
+        <p>&copy; <% new Date().getFullYear %>. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+</html>
