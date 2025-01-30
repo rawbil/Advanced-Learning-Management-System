@@ -243,7 +243,7 @@ export const addQuestion = catchAsyncErrors(
       //send notification to the admin
       const notificationData = {
         title: `New Question`,
-        message: `New Question in course: ${course?.name}`
+        message: `New Question in course: ${courseContent?.title}`
       }
 
       await notificationModel.create(notificationData);
@@ -300,8 +300,9 @@ export const AddAnswer = catchAsyncErrors(
         //create notification
         const notificationData = {
           title: content.title,
-          message: "You have replied to the new "
+          message: `A reply to the question ${question.question}`,
         }
+        await notificationModel.create(notificationData);
       } else {
         const data = {
           name: question.user.name,
