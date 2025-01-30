@@ -24,13 +24,13 @@ export const updateNotification = catchAsyncErrors(async(req: Request, res: Resp
             return next(new ErrorHandler("Notification not found", 404));
         }
 
-        notification.status = "read";
+        notification.status === "unread" ? notification.status = "read": notification.status;
         await notification.save();
         
         //re-arrange notifications
         const notifications = await notificationModel.find().sort({updatedAt: 1})
 
-        res.status(200).json({success: true, notifications})
+        res.status(200).json({success: true, notification})
         
     } catch (error: any) {
         return next(new ErrorHandler(error.message, 500));
