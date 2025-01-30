@@ -30,7 +30,7 @@ export const updateNotification = catchAsyncErrors(async(req: Request, res: Resp
         //re-arrange notifications
         const notifications = await notificationModel.find().sort({updatedAt: 1})
 
-        res.status(200).json({success: true, notification})
+        res.status(200).json({success: true, notifications})
         
     } catch (error: any) {
         return next(new ErrorHandler(error.message, 500));

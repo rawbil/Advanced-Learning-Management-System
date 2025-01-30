@@ -5,11 +5,12 @@ import cloudinary from "cloudinary";
 import courseModel from "../models/courseModel";
 import { redis } from "../utils/redis";
 import mongoose from "mongoose";
-import ejs from 'ejs';
+import ejs from "ejs";
 import path from "path";
 import sendMail from "../utils/sendMail";
 import { IUser } from "../models/userModel";
-require('dotenv').config();
+import notificationModel from "../models/notificationModel";
+require("dotenv").config();
 
 //upload course
 export const UploadCourse = catchAsyncErrors(
@@ -193,7 +194,7 @@ export const getCourseByUser = catchAsyncErrors(
       if (!courseExists) {
         return next(
           new ErrorHandler("You are not eligible for this course", 404)
-        );  
+        );
       }
 
       const course = await courseModel.findById(courseId);
@@ -239,160 +240,188 @@ export const addQuestion = catchAsyncErrors(
       //add the question to the course content
       courseContent.questions.push(newQuestion);
 
-      //save the updated course 
+      //send notification to the admin
+      const notificationData = {
+        title: `New Question`,
+        message: `New Question in course: ${course?.name}`
+      }
+
+      await notificationModel.create(notificationData);
+
+      //save the updated course
       await course?.save();
 
-      res.status(200).json({success: true, course})
+      res.status(200).json({ success: true, course });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
   }
 );
 
-
 //add answer in course question
 interface IAddAnswer {
-  courseId: string,
-  contentId: string,
-  questionId: string,
-  answer: string,
+  courseId: string;
+  contentId: string;
+  questionId: string;
+  answer: string;
 }
 
-export const AddAnswer = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
-  try {
-    const {courseId, contentId, questionId, answer} = req.body as IAddAnswer;
-    const course = await courseModel.findById(courseId);
-    const content = course?.courseData.find((content: any) => content._id === contentId);
-    if(!content) {
-      return next(new ErrorHandler("Content not found", 404));
-    };
-
-    const question = content.questions.find((quiz: any) => quiz._id === questionId);
-    if(!question) {
-      return next(new ErrorHandler("Question not found", 404));
-    }
-
-    const questionReply: any = {
-      user: req.user,
-      answer,
-    }
-
-    question.questionReplies?.push(questionReply);
-
-    await course?.save();
-
-    //notification to the owner of the email
-    if(req.user?._id ===  question.user._id) {
-      //create notification
-    } else {
-      const data = {
-        name: question.user.name,
-        title: content.title
+export const AddAnswer = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { courseId, contentId, questionId, answer } =
+        req.body as IAddAnswer;
+      const course = await courseModel.findById(courseId);
+      const content = course?.courseData.find(
+        (content: any) => content._id === contentId
+      );
+      if (!content) {
+        return next(new ErrorHandler("Content not found", 404));
       }
-      const html = await ejs.renderFile(path.join(__dirname, '../mails/question-reply.ejs'), data);
 
-      try {
-        await sendMail({
-          email: question.user.email,
-          subject: "Question Reply",
-          data,
-          template: "question-reply.ejs",
-        })
-      } catch (error: any) {
-        return next(new ErrorHandler(error.message, 500));
+      const question = content.questions.find(
+        (quiz: any) => quiz._id === questionId
+      );
+      if (!question) {
+        return next(new ErrorHandler("Question not found", 404));
       }
+
+      const questionReply: any = {
+        user: req.user,
+        answer,
+      };
+
+      question.questionReplies?.push(questionReply);
+
+      await course?.save();
+
+      //notification to the owner of the question
+      if (req.user?._id === question.user._id) {
+        //create notification
+        const notificationData = {
+          title: content.title,
+          message: "You have replied to the new "
+        }
+      } else {
+        const data = {
+          name: question.user.name,
+          title: content.title,
+        };
+        const html = await ejs.renderFile(
+          path.join(__dirname, "../mails/question-reply.ejs"),
+          data
+        );
+
+        try {
+          await sendMail({
+            email: question.user.email,
+            subject: "Question Reply",
+            data,
+            template: "question-reply.ejs",
+          });
+        } catch (error: any) {
+          return next(new ErrorHandler(error.message, 500));
+        }
+      }
+
+      res.status(200).json({ success: true, course });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
     }
-    
-    res.status(200).json({success: true, course})
-    
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 500));
   }
-})
+);
 
 //add review in course
 interface IReviewData {
-  review: string,
-  rating: number,
-  commentReplies: []
+  review: string;
+  rating: number;
+  commentReplies: [];
 }
 
-export const AddCourseReview = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
-  try {
-   const courseId = req.params.id;
-   const userCourseList = req.user?.courses;
-   const courseExists = userCourseList?.find((course: any) => course._id.toString() === courseId);
-   if(!courseExists) {
-    return next(new ErrorHandler("You are not eligible to access this course ", 404));
-   }
+export const AddCourseReview = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const courseId = req.params.id;
+      const userCourseList = req.user?.courses;
+      const courseExists = userCourseList?.find(
+        (course: any) => course._id.toString() === courseId
+      );
+      if (!courseExists) {
+        return next(
+          new ErrorHandler("You are not eligible to access this course ", 404)
+        );
+      }
 
-   const course = await courseModel.findById(courseId);
+      const course = await courseModel.findById(courseId);
 
-   const {review, rating}: IReviewData = req.body;
+      const { review, rating }: IReviewData = req.body;
 
-   const reviewData: any = {
-    user: req.user as IUser,
-    comment: review,
-    rating,
-    commentReplies: []
-   }
+      const reviewData: any = {
+        user: req.user as IUser,
+        comment: review,
+        rating,
+        commentReplies: [],
+      };
 
-   course?.reviews.push(reviewData);
+      course?.reviews.push(reviewData);
 
-   let totalReviews = 0;
-   course?.reviews.forEach((rev: any) => {
-    totalReviews += rev.rating;
-   })
+      let totalReviews = 0;
+      course?.reviews.forEach((rev: any) => {
+        totalReviews += rev.rating;
+      });
 
-   if (course) {
-     course.ratings = totalReviews / course.reviews.length;
-   }
-   await course?.save();
+      if (course) {
+        course.ratings = totalReviews / course.reviews.length;
+      }
+      await course?.save();
 
-   const notification = {
-    title: "New Review Received",
-    message: `${req.user?.name} added a review in the course: ${course?.name}`
-   }
+      const notification = {
+        title: "New Review Received",
+        message: `${req.user?.name} added a review in the course: ${course?.name}`,
+      };
 
-   //create notification
+      //create notification
 
-   res.status(200).json({success: true, course});
-
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 500));
-  } 
-})
+      res.status(200).json({ success: true, course });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 
 //add review reply --only admin can reply to review
 interface IReviewReply {
-  courseId: string,
-  reviewId: string,
-  comment: string,
+  courseId: string;
+  reviewId: string;
+  comment: string;
 }
-export const AddReviewReply = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
-  try {
-    const {reviewId, comment, courseId} = req.body as IReviewReply;
+export const AddReviewReply = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { reviewId, comment, courseId } = req.body as IReviewReply;
 
-    const course = await courseModel.findById(courseId);
-    if(!course) {
-      return next(new ErrorHandler("Course not found", 404));
+      const course = await courseModel.findById(courseId);
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
+
+      const courseReview = course?.reviews.find(
+        (review: any) => review._id.toString() === reviewId
+      );
+      if (!courseReview) {
+        return next(new ErrorHandler("Review not found", 404));
+      }
+      const newReview: any = {
+        user: req.user,
+        comment,
+      };
+
+      courseReview?.commentReplies?.push(newReview);
+      await course?.save();
+
+      res.status(200).json({ success: true, course });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
     }
-
-    const courseReview = course?.reviews.find((review: any) => review._id.toString() === reviewId);
-    if(!courseReview) {
-      return next(new ErrorHandler("Review not found", 404))
-    }
-    const newReview: any = {
-      user: req.user,
-      comment,
-    }
-
-    courseReview?.commentReplies?.push(newReview)
-    await course?.save();
-
-    res.status(200).json({success: true, course}); 
-    
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 500));
-  } 
-})
+  }
+);
