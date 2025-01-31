@@ -71,7 +71,7 @@ export const createOrder = catchAsyncErrors(
       await user?.save();
 
       //send notification to admin, saying order was created
-     const notification = await notificationModel.create({
+      const notification = await notificationModel.create({
         title: "New Order",
         message: `You have a new order from ${course.name}`,
       });
@@ -93,3 +93,14 @@ export const createOrder = catchAsyncErrors(
   }
 );
 
+//get all orders --admin
+export const getAllOrders = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const orders = await orderModel.find().sort({ createdAt: -1 });
+      res.status(200).json({ success: true, orders });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);

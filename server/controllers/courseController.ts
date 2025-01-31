@@ -243,8 +243,8 @@ export const addQuestion = catchAsyncErrors(
       //send notification to the admin
       const notificationData = {
         title: `New Question`,
-        message: `New Question in course: ${courseContent?.title}`
-      }
+        message: `New Question in course: ${courseContent?.title}`,
+      };
 
       await notificationModel.create(notificationData);
 
@@ -301,7 +301,7 @@ export const AddAnswer = catchAsyncErrors(
         const notificationData = {
           title: content.title,
           message: `A reply to the question ${question.question}`,
-        }
+        };
         await notificationModel.create(notificationData);
       } else {
         const data = {
@@ -426,3 +426,15 @@ export const AddReviewReply = catchAsyncErrors(
     }
   }
 );
+
+//get all courses --- admin
+export const getAllCoursesAdmin = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const courses = await courseModel.find().sort({createdAt: -1});
+
+    res.status(200).json({success: true, courses});
+    
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+})
