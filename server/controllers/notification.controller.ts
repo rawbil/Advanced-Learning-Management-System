@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import catchAsyncErrors from "../middleware/catchAsyncErrors";
 import ErrorHandler from "../utils/ErrorHandler";
 import notificationModel from "../models/notificationModel";
+import cron from 'node-cron';
 
 //get all notifications -- only for admin
 export const getNotifications = catchAsyncErrors(
@@ -44,3 +45,11 @@ export const updateNotification = catchAsyncErrors(
     }
   }
 );
+
+//delete notification --admin
+//every day at midnight
+cron.schedule('0 0 0 * * *', async() => {
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); //returns time from thirty days ago to now
+  await notificationModel.deleteMany({status: "read", createdAt: {$lt: thirtyDaysAgo}})
+  console.log("Deleted read notifications");
+})
