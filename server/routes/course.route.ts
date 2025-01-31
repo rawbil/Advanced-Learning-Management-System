@@ -1,5 +1,16 @@
 import express from "express";
-import { AddAnswer, AddCourseReview, addQuestion, AddReviewReply, EditCourse, getAllCourses, getCourseByUser, getSingleCourse, UploadCourse } from "../controllers/courseController";
+import {
+  AddAnswer,
+  AddCourseReview,
+  addQuestion,
+  AddReviewReply,
+  EditCourse,
+  getAllCourses,
+  getAllCoursesAdmin,
+  getCourseByUser,
+  getSingleCourse,
+  UploadCourse,
+} from "../controllers/courseController";
 import { authMiddleware, authorizeRoles } from "../middleware/authMiddleware";
 const route = express.Router();
 
@@ -19,32 +30,37 @@ route.put(
 );
 //api/v1/course/id
 //all users can access this route
-route.get(
-  "/get-course/:id",
-  getSingleCourse
-);
+route.get("/get-course/:id", getSingleCourse);
 //api/v1/courses
 //all users can access this route
-route.get(
-  "/courses",
-  getAllCourses
-);
+route.get("/courses", getAllCourses);
 //api/v1/course-content/id
 //only for valid users
-route.get('/course-content/:id',authMiddleware, getCourseByUser);
+route.get("/course-content/:id", authMiddleware, getCourseByUser);
 //add question
 //api/v1/add-question
-route.put('/add-question', authMiddleware, addQuestion);
+route.put("/add-question", authMiddleware, addQuestion);
 //add answer
 //api/v1/add-answer
 route.put("/add-answer", authMiddleware, AddAnswer);
 //add review
 //api/v1/add-review/:id
-route.put('/add-review/:id', authMiddleware, AddCourseReview);
+route.put("/add-review/:id", authMiddleware, AddCourseReview);
 //add review reply
 //api/v1/add-review-reply
-route.put("/add-review-reply", authMiddleware, authorizeRoles("admin"), AddReviewReply);
-//delete review
-
+route.put(
+  "/add-review-reply",
+  authMiddleware,
+  authorizeRoles("admin"),
+  AddReviewReply
+);
+//get all courses --- admin
+//api/v1/admin-get-courses
+route.get(
+  "/admin-get-courses",
+  authMiddleware,
+  authorizeRoles("admin"),
+  getAllCoursesAdmin
+);
 
 export default route;
