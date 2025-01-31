@@ -39,7 +39,7 @@ export const updateNotification = catchAsyncErrors(
         .sort({ updatedAt: 1 });
 
       res.status(200).json({ success: true, notifications });
-    } catch (error: any) {
+    } catch (error: any) { 
       return next(new ErrorHandler(error.message, 500));
     }
   }
