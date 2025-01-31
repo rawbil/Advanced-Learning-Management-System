@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 import {
   activateUser,
+  getAllUsers,
   getUserInfo,
   LoginUser,
   LogoutUser,
@@ -53,4 +54,8 @@ router.put("/update-password", authMiddleware, UpdateUserPassword);
 //update user avatar
 //api/v1/update-avatar
 router.put("/update-avatar", authMiddleware, UpdateAvatar);
+
+//get all users ---admin
+//api/v1/get-all-useres
+router.get('/get-all-users', authMiddleware, authorizeRoles("admin"), getAllUsers);
 export default router;
