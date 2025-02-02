@@ -457,6 +457,9 @@ export const updateUserRole = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { role } = req.body;
+      if(!role) {
+        return next(new ErrorHandler("Role not provided", 400))
+      }
       //find the user
       const id = req.user?._id;
       const user = await userModel.findByIdAndUpdate(
