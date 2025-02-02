@@ -434,19 +434,42 @@ export const UpdateAvatar = catchAsyncErrors(
 
       await user.save();
       await redis.set(userId, JSON.stringify(user));
-      res.status(200).json({success: true, user});
+      res.status(200).json({ success: true, user });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
   }
 );
 
-
 //get all users --admin
-export const getAllUsers = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
-  try {
-    getAllUsersService(res);
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 500));
+export const getAllUsers = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllUsersService(res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
   }
-})
+);
+
+//update user role --admin only
+export const updateUserRole = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { role } = req.body;
+      //find the user
+      const id = req.user?._id;
+      const user = await userModel.findByIdAndUpdate(
+        id,
+        {
+          role,
+        },
+        { new: true }
+      );
+
+      res.status(200).json({ success: true, user });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);

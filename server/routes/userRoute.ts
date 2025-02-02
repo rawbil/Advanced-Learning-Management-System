@@ -12,6 +12,7 @@ import {
   UpdateAvatar,
   UpdateUserInfo,
   UpdateUserPassword,
+  updateUserRole,
 } from "../controllers/userController";
 import { authMiddleware, authorizeRoles } from "../middleware/authMiddleware";
 
@@ -58,4 +59,8 @@ router.put("/update-avatar", authMiddleware, UpdateAvatar);
 //get all users ---admin
 //api/v1/get-all-useres
 router.get('/get-all-users', authMiddleware, authorizeRoles("admin"), getAllUsers);
+
+//update user role --admin
+//api/v1/update-role
+router.put('/update-role', authMiddleware, authorizeRoles("admin"), updateUserRole);
 export default router;
