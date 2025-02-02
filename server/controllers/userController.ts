@@ -457,8 +457,8 @@ export const updateUserRole = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { role } = req.body;
-      if(!role) {
-        return next(new ErrorHandler("Role not provided", 400))
+      if (!role) {
+        return next(new ErrorHandler("Role not provided", 400));
       }
       //find the user
       const id = req.user?._id;
@@ -470,7 +470,7 @@ export const updateUserRole = catchAsyncErrors(
         { new: true }
       );
 
-      await redis.set(id as string, JSON.stringify(user))
+      await redis.set(id as string, JSON.stringify(user));
 
       res.status(200).json({ success: true, user });
     } catch (error: any) {
@@ -479,17 +479,19 @@ export const updateUserRole = catchAsyncErrors(
   }
 );
 
-
 //Delete user
-export const DeleteUser = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.user?._id as string;
-    const user = await userModel.findByIdAndDelete(userId);
-    await redis.del(userId.toString())
+export const DeleteUser = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user?._id as string;
+      const user = await userModel.findByIdAndDelete(userId);
+      await redis.del(userId.toString());
 
-    res.status(200).json({success: true, message: `Deleted user: ${user?._id}`});
-    
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 500));
+      res
+        .status(200)
+        .json({ success: true, message: `Deleted user: ${user?._id}` });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
   }
-})
+);

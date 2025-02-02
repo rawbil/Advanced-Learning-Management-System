@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 import {
   activateUser,
+  DeleteUser,
   getAllUsers,
   getUserInfo,
   LoginUser,
@@ -63,4 +64,7 @@ router.get('/get-all-users', authMiddleware, authorizeRoles("admin"), getAllUser
 //update user role --admin
 //api/v1/update-role
 router.put('/update-role', authMiddleware, authorizeRoles("admin"), updateUserRole);
+
+//delete user --admin
+router.delete('/delete-user', authMiddleware, authorizeRoles("admin"), DeleteUser)
 export default router;
