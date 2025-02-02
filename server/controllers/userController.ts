@@ -476,3 +476,17 @@ export const updateUserRole = catchAsyncErrors(
     }
   }
 );
+
+
+//Delete user
+export const DeleteUser = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?._id;
+    const user = await userModel.findByIdAndDelete(userId);
+
+    res.status(200).json({success: true, message: `Deleted user: ${user?._id}`});
+    
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+})
