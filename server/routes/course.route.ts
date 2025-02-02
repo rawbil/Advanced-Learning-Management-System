@@ -4,6 +4,7 @@ import {
   AddCourseReview,
   addQuestion,
   AddReviewReply,
+  deleteCourse,
   EditCourse,
   getAllCourses,
   getAllCoursesAdmin,
@@ -62,5 +63,8 @@ route.get(
   authorizeRoles("admin"),
   getAllCoursesAdmin
 );
+//delete course --admin
+//api/v1/delete-course/:id
+route.delete('/delete-course/:id', authMiddleware, authorizeRoles("admin"), deleteCourse);
 
 export default route;

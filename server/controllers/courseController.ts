@@ -438,3 +438,27 @@ export const getAllCoursesAdmin = catchAsyncErrors(async(req: Request, res: Resp
     return next(new ErrorHandler(error.message, 500));
   }
 })
+
+//delete course
+export const deleteCourse = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const courseId = req.params.id;
+    const course = await courseModel.findById(courseId);
+    if (!course) {
+      return next(new ErrorHandler("Course not found", 404));
+    }
+
+    // Delete the course thumbnail from Cloudinary if it exists
+    if (course.thumbnail && course.thumbnail.public_id) {
+      await cloudinary.v2.uploader.destroy(course.thumbnail.public_id);
+    }
+
+    // Delete the course from the database
+    await courseModel.deleteOne({ _id: courseId });
+    await redis.del(courseId);
+
+    res.status(200).json({ success: true, message: "Course deleted successfully" });
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
