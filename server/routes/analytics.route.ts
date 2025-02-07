@@ -5,7 +5,7 @@ import router from './userRoute';
 const route = express.Router();
 
 //users analytics route
-//api/v1/user-analytics
-route.get('/user-analytics', authMiddleware, authorizeRoles("admin"), getUserAnalytics);
+//api/v1/users-analytics
+route.get('/users-analytics', authMiddleware, authorizeRoles("admin"), getUserAnalytics);
 
 export default router;
