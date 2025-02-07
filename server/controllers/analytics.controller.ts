@@ -8,6 +8,8 @@ import userModel from "../models/userModel";
 const getUserAnalytics = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
     try {
         const users = await generateLast12MonthsData(userModel);
+
+        res.status(200).json({success: true, message: "User Analytics", users}); 
         
     } catch (error: any) {
        return next(new ErrorHandler(error.message, 500)); 
