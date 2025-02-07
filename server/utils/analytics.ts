@@ -30,8 +30,7 @@ export async function generateLast12MonthsData<T extends Document>(
       year: "numeric",
     });
     const count = await model.countDocuments({
-      createdAt: startDate,
-      $lt: endDate,
+      createdAt: { $gte: startDate, $lt: endDate }
     });
     last12Months.push({ month: monthYear, count });
   }
