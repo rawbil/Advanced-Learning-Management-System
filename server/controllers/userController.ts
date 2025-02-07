@@ -294,9 +294,25 @@ export const SocialAuth = catchAsyncErrors(
       const { email, name, avatar } = req.body as ISocialAuthBody;
       const user = await userModel.findOne({ email });
       if (!user) {
-        const newUser = await userModel.create({ email, name, avatar });
+        let avatarBody = {};
+        if (avatar) {
+          const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+            folder: "avatars",
+          });
+
+          avatarBody = {
+            public_id: myCloud.public_id,
+            url: myCloud.secure_url,
+          };
+        }
+        const newUser = await userModel.create({
+          name,
+          email,
+          avatar: avatarBody,
+        });
+
         sendToken(newUser, 200, res);
-      } else {
+      }  else {
         sendToken(user, 200, res);
       }
     } catch (error: any) {
