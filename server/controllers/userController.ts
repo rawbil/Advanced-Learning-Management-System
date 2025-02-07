@@ -6,6 +6,7 @@ import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 require("dotenv").config();
 import ejs from "ejs";
 import cloudinary from "cloudinary";
+import validator from "validator";
 import path from "path";
 import sendMail from "../utils/sendMail";
 import {
@@ -29,6 +30,28 @@ export const registerUser = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email, password } = req.body;
+
+      if (!name || !email || !password) {
+        return next(new ErrorHandler("Please provide all the fields", 400));
+      }
+
+      //validate email
+      const isValidEmail = validator.isEmail(email);
+      if (!isValidEmail) {
+        return next(new ErrorHandler("Incorrect email format", 400));
+      }
+
+      //validate password
+      const isValidPassword = validator.isStrongPassword(password);
+      if (!isValidPassword) {
+        return next(
+          new ErrorHandler(
+            "Password should be at least 8 characters, have at least one uppercase letter, one numerical value and one special character",
+            400
+          )
+        );
+      }
+
       const isEmailExists = await userModel.findOne({ email });
       if (isEmailExists) {
         return next(new ErrorHandler("Email already exists", 409));
