@@ -5,7 +5,7 @@ import { generateLast12MonthsData } from "../utils/analytics";
 import userModel from "../models/userModel";
 
 //get users analytics --- only for admin
-const getUserAnalytics = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+export const getUserAnalytics = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
     try {
         const users = await generateLast12MonthsData(userModel);
 
