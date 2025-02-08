@@ -312,7 +312,7 @@ export const SocialAuth = catchAsyncErrors(
         });
 
         sendToken(newUser, 200, res);
-      }  else {
+      } else {
         sendToken(user, 200, res);
       }
     } catch (error: any) {
@@ -356,6 +356,9 @@ export const UpdateUserInfo = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email } = req.body;
+      if (name && email) {
+        return next(new ErrorHandler("Please provide at least one field", 400));
+      }
       const userId = req.user?._id as string;
       const user = await userModel.findById(userId);
       if (!user) {
@@ -364,24 +367,25 @@ export const UpdateUserInfo = catchAsyncErrors(
         );
       }
 
-      const isEmailExists = await userModel.findOne({ email });
-      if (isEmailExists) {
-        return next(new ErrorHandler("Email already exists", 409));
+      if (email) {
+        const isEmailExists = await userModel.findOne({ email });
+        if (isEmailExists) {
+          return next(new ErrorHandler("Email already exists", 409));
+        }
+        user.email = email;
+
+        // Clear the tokens for user to login again
+        res.cookie("access_token", "", { maxAge: 1 });
+        res.cookie("refresh_token", "", { maxAge: 1 });
       }
 
-      const updateData: IUpdateUserInfo = {};
-      if (name && user) updateData.name = name;
-      if (email && user) updateData.email = email;
+      if (name && user) user.name = name;
 
-      const updatedUser = await userModel.findByIdAndUpdate(
-        userId,
-        updateData,
-        { new: true, runValidators: true }
-      );
+      await user.save();
 
-      redis.set(userId, JSON.stringify(updatedUser));
+      redis.set(userId, JSON.stringify(user));
 
-      res.status(200).json({ success: true, updatedUser });
+      res.status(200).json({ success: true, user });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
@@ -426,9 +430,9 @@ export const UpdateUserPassword = catchAsyncErrors(
       user.password = newPassword;
       await user.save();
 
-        // Clear the tokens for user to login again
-        res.cookie("access_token", "", { maxAge: 1 });
-        res.cookie("refresh_token", "", { maxAge: 1 });
+      // Clear the tokens for user to login again
+      res.cookie("access_token", "", { maxAge: 1 });
+      res.cookie("refresh_token", "", { maxAge: 1 });
       await redis.set(userId, JSON.stringify(user));
       return res.status(201).json({ success: true, user });
     } catch (error: any) {
