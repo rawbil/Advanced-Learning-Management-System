@@ -13,7 +13,7 @@ import {
   UpdateAvatar,
   UpdateUserInfo,
   UpdateUserPassword,
-  updateUserRole,
+  UpdateUserRole,
 } from "../controllers/userController";
 import { authMiddleware, authorizeRoles } from "../middleware/authMiddleware";
 
@@ -63,7 +63,7 @@ router.get('/get-all-users', authMiddleware, authorizeRoles("admin"), getAllUser
 
 //update user role --admin
 //api/v1/update-role
-router.put('/update-role', authMiddleware, authorizeRoles("admin"), updateUserRole);
+router.put('/update-role', authMiddleware, authorizeRoles("admin"), UpdateUserRole);
 
 //delete user --admin
 router.delete('/delete-user', authMiddleware, authorizeRoles("admin"), DeleteUser)
