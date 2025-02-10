@@ -168,6 +168,9 @@ export const GetLayoutByType = catchAsyncErrors(async(req: Request, res: Respons
   try {
     const {type} = req.body;
     const layout = await layoutModel.findOne({type});
+    if(!layout) {
+      return next(new ErrorHandler(`Layout with type: ${type} not found`, 404));
+    }
     res.status(200).json({success: true, layout});
     
   } catch (error: any) {
