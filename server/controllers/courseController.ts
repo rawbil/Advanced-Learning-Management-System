@@ -145,7 +145,7 @@ export const getSingleCourse = catchAsyncErrors(
           ); // without purchasing the course, we limit the data the user gets. Only after purchasing the course will the user get all the course details
 
         //add course session to redis
-        await redis.set(courseId, JSON.stringify(course));
+        await redis.set(courseId, JSON.stringify(course), "EX", 604800);
 
         res
           .status(201)
@@ -428,37 +428,42 @@ export const AddReviewReply = catchAsyncErrors(
 );
 
 //get all courses --- admin
-export const getAllCoursesAdmin = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
-  try {
-    const courses = await courseModel.find().sort({createdAt: -1});
+export const getAllCoursesAdmin = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const courses = await courseModel.find().sort({ createdAt: -1 });
 
-    res.status(200).json({success: true, courses});
-    
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 500));
+      res.status(200).json({ success: true, courses });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
   }
-})
+);
 
 //delete course
-export const deleteCourse = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const courseId = req.params.id;
-    const course = await courseModel.findById(courseId);
-    if (!course) {
-      return next(new ErrorHandler("Course not found", 404));
+export const deleteCourse = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const courseId = req.params.id;
+      const course = await courseModel.findById(courseId);
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
+
+      // Delete the course thumbnail from Cloudinary if it exists
+      if (course.thumbnail && course.thumbnail.public_id) {
+        await cloudinary.v2.uploader.destroy(course.thumbnail.public_id);
+      }
+
+      // Delete the course from the database
+      await courseModel.deleteOne({ _id: courseId });
+      await redis.del(courseId);
+
+      res
+        .status(200)
+        .json({ success: true, message: "Course deleted successfully" });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
     }
-
-    // Delete the course thumbnail from Cloudinary if it exists
-    if (course.thumbnail && course.thumbnail.public_id) {
-      await cloudinary.v2.uploader.destroy(course.thumbnail.public_id);
-    }
-
-    // Delete the course from the database
-    await courseModel.deleteOne({ _id: courseId });
-    await redis.del(courseId);
-
-    res.status(200).json({ success: true, message: "Course deleted successfully" });
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 500));
   }
-});
+);
