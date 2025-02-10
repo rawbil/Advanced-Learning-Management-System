@@ -128,9 +128,36 @@ export const UpdateLayout = catchAsyncErrors(async (req: Request, res: Response,
       await layout.save();
 
       res.status(200).json({ success: true, message: "Banner updated successfully", layout });
-    } else {
-      return next(new ErrorHandler("Invalid layout type", 400));
+    } 
+
+    if(type === "FAQ") {
+      const {faq} = req.body; // you have to add a new array each time?
+      const faqItem = await layoutModel.findOne({type});
+      const faqData = faq.map((item: any) => ({
+        question: item.question,
+        answer: item.answer,
+      }));
+
+     const newLayout = await layoutModel.findByIdAndUpdate(faqItem?._id, {
+        type: "FAQ",
+        faq: faqData,
+      }, {new: true});
+      res.status(200).json({success: true, newLayout});
     }
+
+    if(type === "Categories") {
+      const {categories} = req.body;
+      const categoriesItem = await layoutModel.findOne({type});
+      const categoriesData = categories.map((item: any) => ({
+        title: item.title,
+      }));
+     const newLayout =  await layoutModel.findByIdAndUpdate(categoriesItem?._id, {
+        type: "Categories",
+        categories: categoriesData,
+      }, {new: true});
+      res.status(200).json({success: true, newLayout})
+    };
+
   } catch (error: any) {
     return next(new ErrorHandler(error.message, 500));
   }
