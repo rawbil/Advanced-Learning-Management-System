@@ -9,7 +9,7 @@ import { isArray } from "util";
 export const CreateLayout = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { type } = req.body;\
+      const { type } = req.body;
       //check if type already exists. A single type can only appear once
       const isTypeExist = await layoutModel.findOne({type});
       if(isTypeExist) {
