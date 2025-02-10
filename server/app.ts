@@ -4,11 +4,11 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 require("dotenv").config();
 import userRouter from "./routes/userRoute";
-import courseRouter from './routes/course.route';
-import orderRouter from './routes/order.route'
-import notificationRouter from './routes/notifications.route';
-import analyticsRouter from './routes/analytics.route';
-import layoutRouter from './routes/layout.routes';
+import courseRouter from "./routes/course.route";
+import orderRouter from "./routes/order.route";
+import notificationRouter from "./routes/notifications.route";
+import analyticsRouter from "./routes/analytics.route";
+import layoutRouter from "./routes/layout.routes";
 
 import errorMiddleware from "./middleware/error";
 //END OF IMPORTS
@@ -28,7 +28,15 @@ app.use(
 );
 
 //routes
-app.use("/api/v1", userRouter, courseRouter, orderRouter, notificationRouter, analyticsRouter, layoutRouter);
+app.use(
+  "/api/v1",
+  userRouter,
+  courseRouter,
+  orderRouter,
+  notificationRouter,
+  analyticsRouter,
+  layoutRouter
+);
 
 //testing api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
@@ -44,12 +52,10 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
 
 //error page
 app.use((req: Request, res: Response, err: any) => {
-  res
-    .status(err.statusCode || 500)
-    .json({
-      success: "false",
-      message: err.message || "Internal Server error",
-    });
+  res.status(err.statusCode || 500).json({
+    success: "false",
+    message: err.message || "Internal Server error",
+  });
 });
 
 app.use(errorMiddleware);

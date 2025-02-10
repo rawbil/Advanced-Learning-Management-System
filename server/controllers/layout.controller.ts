@@ -3,6 +3,7 @@ import catchAsyncErrors from "../middleware/catchAsyncErrors";
 import ErrorHandler from "../utils/ErrorHandler";
 import cloudinary from "cloudinary";
 import layoutModel from "../models/layoutModel";
+import { isArray } from "util";
 
 //create layout
 export const CreateLayout = catchAsyncErrors(
@@ -31,13 +32,28 @@ export const CreateLayout = catchAsyncErrors(
       }
 
       if(type === "FAQ") {
-        const {faq} = req.body;
-        await layoutModel.create(faq);
+        const {faq} = req.body; //array\
+        if(!Array.isArray(faq)) {
+          return next(new ErrorHandler("FAQ must be an array", 400));
+        }
+
+        const faqData = faq.map((item: any) => ({
+          question: item.question,
+          answer: item.answer
+        }))
+        await layoutModel.create({type: "FAQ", faq: faqData});
       }
 
       if(type === "Categories") {
         const {categories} = req.body;
-        await layoutModel.create(categories);
+        if(!Array.isArray(categories)) {
+          return next(new ErrorHandler("Categories must be an array", 400));
+        }
+
+        const categoriesData = categories.map((item: any) => ({
+          item: item.title
+        }))
+        await layoutModel.create({type: "Categories", categories: categoriesData});
       }
 
       res.status(200).json({success: true, message: "Layout created successfully"});
