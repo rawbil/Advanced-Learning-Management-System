@@ -10,6 +10,6 @@ route.post('/create-layout', authMiddleware, authorizeRoles("admin"), CreateLayo
 //api/v1/update-layout
 route.put('/update-layout', authMiddleware, authorizeRoles("admin"), UpdateLayout);
 //get layout by type
-route.get('/get-layout', authMiddleware, authorizeRoles("admin"), GetLayoutByType);
+route.get('/get-layout', GetLayoutByType);
 
 export default route;
