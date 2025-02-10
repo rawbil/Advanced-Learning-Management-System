@@ -109,7 +109,6 @@ export const UpdateLayout = catchAsyncErrors(async (req: Request, res: Response,
         });
 
         // Update the image field
-        // !This error does not affect the implementation--- irrelevant
         updatedBanner.image = {
           public_id: myCloud.public_id,
           url: myCloud.secure_url,
