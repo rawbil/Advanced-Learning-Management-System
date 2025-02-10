@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import catchAsyncErrors from "../middleware/catchAsyncErrors";
 import ErrorHandler from "../utils/ErrorHandler";
 import cloudinary from "cloudinary";
-import layoutModel from "../models/layoutModel";
-import { isArray } from "util";
+import layoutModel, { Layout } from "../models/layoutModel";
 
 //create layout
 export const CreateLayout = catchAsyncErrors(
@@ -72,3 +71,48 @@ export const CreateLayout = catchAsyncErrors(
     }
   }
 );
+
+
+//edit layout
+export const UpdateLayout = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {type} = req.body;
+    if(type === "Banner") {
+      const {image, title, subTitle} = req.body;
+      const layout = await layoutModel.find({type}) as any;
+      if(!layout) {
+        return next(new ErrorHandler(`Layout ${type} not found`,404));
+      }
+
+      if(image) {
+        if(layout && layout.banner.image.public_id) {
+          await cloudinary.v2.uploader.destroy(layout.banner.image.public_id);
+
+          const myCloud = await cloudinary.v2.uploader.upload(image, {
+            folder: "layout"
+          });
+
+        await layoutModel.findOneAndUpdate({type}, {
+        banner: {
+          image: {
+            public_id: myCloud.public_id,
+            url: myCloud.secure_url
+          },
+          title, 
+          subTitle
+        },
+      })
+        }
+      } else {
+        layout.banner.title = title;
+        layout.banner.subTitle = subTitle;
+        await layout.save();
+      }
+
+      
+    }
+    
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+})

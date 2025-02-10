@@ -14,7 +14,7 @@ interface BannerImage extends Document {
   url: string;
 }
 
-interface Layout extends Document {
+export interface Layout extends Document {
   type: string;
   faq: FaqItem[];
   categories: Category[];
