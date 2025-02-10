@@ -9,7 +9,7 @@ interface Category extends Document {
   title: string;
 }
 
-interface BannerImage extends Document {
+export interface BannerImage extends Document {
   public_id: string;
   url: string;
 }

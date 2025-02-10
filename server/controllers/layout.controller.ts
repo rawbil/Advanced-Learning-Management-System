@@ -10,8 +10,8 @@ export const CreateLayout = catchAsyncErrors(
     try {
       const { type } = req.body;
       //check if type already exists. A single type can only appear once
-      const isTypeExist = await layoutModel.findOne({type});
-      if(isTypeExist) {
+      const isTypeExist = await layoutModel.findOne({ type });
+      if (isTypeExist) {
         return next(new ErrorHandler("Type already exists", 409));
       }
       if (type === "Banner") {
@@ -32,7 +32,7 @@ export const CreateLayout = catchAsyncErrors(
           title,
           subTitle,
         };
-        await layoutModel.create({type: "Banner", banner})
+        await layoutModel.create({ type: "Banner", banner });
       }
 
       if (type === "FAQ") {
@@ -73,46 +73,66 @@ export const CreateLayout = catchAsyncErrors(
 );
 
 
-//edit layout
-export const UpdateLayout = catchAsyncErrors(async(req: Request, res: Response, next: NextFunction) => {
+// Update layout
+export const UpdateLayout = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const {type} = req.body;
-    if(type === "Banner") {
-      const {image, title, subTitle} = req.body;
-      const layout = await layoutModel.find({type}) as any;
-      if(!layout) {
-        return next(new ErrorHandler(`Layout ${type} not found`,404));
+    const { type } = req.body;
+
+    if (type === "Banner") {
+      const { image, title, subTitle } = req.body;
+      if (!image && !title && !subTitle) {
+        return next(new ErrorHandler("Update at least one field", 400));
       }
 
-      if(image) {
-        if(layout && layout.banner.image.public_id) {
-          await cloudinary.v2.uploader.destroy(layout.banner.image.public_id);
-
-          const myCloud = await cloudinary.v2.uploader.upload(image, {
-            folder: "layout"
-          });
-
-        await layoutModel.findOneAndUpdate({type}, {
-        banner: {
-          image: {
-            public_id: myCloud.public_id,
-            url: myCloud.secure_url
-          },
-          title, 
-          subTitle
-        },
-      })
-        }
-      } else {
-        layout.banner.title = title;
-        layout.banner.subTitle = subTitle;
-        await layout.save();
+      const layout = await layoutModel.findOne({ type });
+      if (!layout) {
+        return next(new ErrorHandler(`Layout ${type} not found`, 404));
       }
 
+      // Preserve existing banner fields
       
+      const updatedBanner = {
+        image: layout.banner.image as any,
+        title: layout.banner.title,
+        subTitle: layout.banner.subTitle,
+      };
+
+      if (image) {
+        // Delete the old image from Cloudinary if it exists
+        if (layout.banner && layout.banner.image.public_id) {
+          await cloudinary.v2.uploader.destroy(layout.banner.image.public_id);
+        }
+
+        // Upload the new image to Cloudinary
+        const myCloud = await cloudinary.v2.uploader.upload(image, {
+          folder: "layout",
+        });
+
+        // Update the image field
+        // !This error does not affect the implementation--- irrelevant
+        updatedBanner.image = {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        } 
+      }
+
+      if (title) {
+        updatedBanner.title = title;
+      }
+
+      if (subTitle) {
+        updatedBanner.subTitle = subTitle;
+      }
+
+      // Update the layout with the new banner
+      layout.banner = updatedBanner;
+      await layout.save();
+
+      res.status(200).json({ success: true, message: "Banner updated successfully", layout });
+    } else {
+      return next(new ErrorHandler("Invalid layout type", 400));
     }
-    
   } catch (error: any) {
     return next(new ErrorHandler(error.message, 500));
   }
-})
+});
