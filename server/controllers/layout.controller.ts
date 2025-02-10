@@ -28,7 +28,7 @@ export const CreateLayout = catchAsyncErrors(
           title,
           subTitle,
         };
-        await layoutModel.create(banner);
+        await layoutModel.create({type: "Banner", banner})\
       }
 
       if (type === "FAQ") {
