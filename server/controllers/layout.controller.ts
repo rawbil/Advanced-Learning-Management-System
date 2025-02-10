@@ -31,33 +31,37 @@ export const CreateLayout = catchAsyncErrors(
         await layoutModel.create(banner);
       }
 
-      if(type === "FAQ") {
-        const {faq} = req.body; //array\
-        if(!Array.isArray(faq)) {
+      if (type === "FAQ") {
+        const { faq } = req.body; //array\
+        if (!Array.isArray(faq)) {
           return next(new ErrorHandler("FAQ must be an array", 400));
         }
 
         const faqData = faq.map((item: any) => ({
           question: item.question,
-          answer: item.answer
-        }))
-        await layoutModel.create({type: "FAQ", faq: faqData});
+          answer: item.answer,
+        }));
+        await layoutModel.create({ type: "FAQ", faq: faqData });
       }
 
-      if(type === "Categories") {
-        const {categories} = req.body;
-        if(!Array.isArray(categories)) {
+      if (type === "Categories") {
+        const { categories } = req.body;
+        if (!Array.isArray(categories)) {
           return next(new ErrorHandler("Categories must be an array", 400));
         }
 
         const categoriesData = categories.map((item: any) => ({
-          item: item.title
-        }))
-        await layoutModel.create({type: "Categories", categories: categoriesData});
+          item: item.title,
+        }));
+        await layoutModel.create({
+          type: "Categories",
+          categories: categoriesData,
+        });
       }
 
-      res.status(200).json({success: true, message: "Layout created successfully"});
-
+      res
+        .status(200)
+        .json({ success: true, message: "Layout created successfully" });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
