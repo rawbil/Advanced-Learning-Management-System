@@ -12,6 +12,9 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      backgroundImage: {
+        
+      },
       screens: {
         "1000px": "1000px",
         "1100px": "1100px",
