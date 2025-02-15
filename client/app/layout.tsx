@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 import "./globals.css";
-import ThemeProvider  from "@/Context/ThemeContext";
 
 export const metadata: Metadata = {
   title: "Learning Management System",
-  description: "A Learning Management System for students to learn using video tutorials",
-  keywords: "Programming, MERN, Redux, Machine Learning"
+  description:
+    "A Learning Management System for students to learn using video tutorials",
+  keywords: "Programming, MERN, Redux, Machine Learning",
 };
 
 export default function RootLayout({
@@ -16,20 +16,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-      <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (() => {
-                const theme = localStorage.getItem('theme') || 'light';
-                document.documentElement.classList.add(theme);
-              })();
-            `,
-          }}
-        ></script>
+   
       </head>
       <body className="dark:bg-black bg-white">
-        <ThemeProvider>
-        <main>{children}</main></ThemeProvider>
+        
+          <main>{children}</main>
+        
       </body>
     </html>
   );
