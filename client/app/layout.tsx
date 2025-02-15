@@ -15,6 +15,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+      <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (() => {
+                const theme = localStorage.getItem('theme') || 'light';
+                document.documentElement.classList.add(theme);
+              })();
+            `,
+          }}
+        ></script>
+      </head>
       <body className="dark:bg-black bg-white">
         <ThemeProvider>
         <main>{children}</main></ThemeProvider>

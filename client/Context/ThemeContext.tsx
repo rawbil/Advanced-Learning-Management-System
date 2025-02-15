@@ -11,10 +11,13 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setTheme] = useState("light");
   //load theme and style page
   useEffect(() => {
-    const fetchTheme = localStorage.getItem("theme");
-    if (fetchTheme) {
-      setTheme(fetchTheme);
-      document.documentElement.classList.add(fetchTheme);
+    if (typeof window !== undefined) {
+      const fetchTheme = localStorage.getItem("theme");
+
+      if (fetchTheme) {
+        setTheme(fetchTheme);
+        document.documentElement.classList.add(fetchTheme);
+      }
     } else {
       const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       const newTheme = isDark ? "dark" : "light";
@@ -29,7 +32,6 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("theme", newTheme);
     document.documentElement.classList.remove(theme);
     document.documentElement.classList.add(newTheme);
-  
   };
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
@@ -44,4 +46,4 @@ export const useTheme = () => {
   return context;
 };
 
-export default ThemeProvider
+export default ThemeProvider;
