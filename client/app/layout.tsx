@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import "./globals.css";
+import ThemeProvider  from "@/Context/ThemeContext";
 
 export const metadata: Metadata = {
   title: "Learning Management System",
@@ -14,8 +15,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="">
-        <main>{children}</main>
+      <body className="dark:bg-black bg-white">
+        <ThemeProvider>
+        <main>{children}</main></ThemeProvider>
       </body>
     </html>
   );
