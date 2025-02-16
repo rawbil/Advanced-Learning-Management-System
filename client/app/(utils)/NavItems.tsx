@@ -40,7 +40,7 @@ export default function NavItems({ activeItem, isMobile }: INavItems) {
 
       {isMobile && (
         <div className="800px:hidden mt-5">
-            <div className="w-full text-center py-6">
+            <div className="w-full text-center py-6 ">
             {navItemsData &&
           navItemsData.map((item, index) => (
             <Link href={item.url} key={index} passHref>
