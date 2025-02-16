@@ -29,10 +29,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${poppins.variable} ${Josefin.variable}`}>
+    <html lang="en" className={`${poppins.variable} ${Josefin.variable}`} suppressHydrationWarning>
       <head></head>
-      <body className={`dark:bg-black bg-white `}>
-        <ThemeProvider>
+      <body
+        className={`!bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:to-black duration-300`}
+      >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <main>{children}</main>
         </ThemeProvider>
       </body>
