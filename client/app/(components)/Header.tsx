@@ -11,7 +11,7 @@ interface IHeader {
 export default function Header({ open, setOpen, activeItem }: IHeader) {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
       if(window !== undefined) {
