@@ -14,7 +14,12 @@ export default {
         foreground: "rgb(var(--foreground))"
       },
       backgroundImage: {
-        
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))"
+      },
+      fontFamily: {
+        poppins: ["var(--font-poppins)"],
+        josefin: ["var(--font-josefin)"],
       },
       screens: {
         "1000px": "1000px",
