@@ -9,7 +9,7 @@ export default function Home() {
   const [activeItem, setActiveItem] = useState(0)
 
   return (
-    <div className="font-josefin">
+    <div className="">
       <Header open={open} setOpen={setOpen} activeItem={activeItem} />
     </div>
   )
