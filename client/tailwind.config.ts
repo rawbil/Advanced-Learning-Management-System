@@ -15,7 +15,9 @@ export default {
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))"
+        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "hero-dark":"var(--hero-dark)",
+        "hero-light": "var(--hero-light)"
       },
       fontFamily: {
         poppins: ["var(--font-poppins)"],
@@ -28,7 +30,9 @@ export default {
         "1300px": "1300px",
         "1500px": "1500px",
         "800px": "800px",
+        "500px": "800px",
         "400px": "400px",
+        "300px": "400px",
       }
     },
   },
