@@ -37,7 +37,7 @@ export default function Header({ open, setOpen, activeItem }: IHeader) {
   return (
     <div className="w-full relative">
       <div
-        className={`border-b dark:border-[#fffff1c]  h-[80px] z-[80] fixed top-0 left-0 right-0 transition duration-500 dark:bg-opacity-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-black   ${active ? "shadow-xl" : "shadow"}`}
+        className={`border-b dark:border-[#fffff1c]  h-[80px] z-[80] fixed top-0 left-0 right-0 transition duration-500 dark:bg-opacity-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-black bg-white ${active ? "shadow-xl" : "shadow"}`}
       >
         <div className="w-[95%] 800px:w-[92%] mx-auto py-2 h-full flex items-center">
           <div className="w-full h-[80px] flex items-center justify-between p-3">
