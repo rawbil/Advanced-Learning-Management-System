@@ -40,7 +40,13 @@ export default function NavItems({ activeItem, isMobile }: INavItems) {
 
       {isMobile && (
         <div className="800px:hidden mt-5">
-            <div className="w-full text-center py-6 ">
+               <Link
+              href={"/"}
+              className={`text-[25px] font-josefin font-[800] text-black dark:text-white flex justify-center mb-5`}
+            >
+              LMS
+            </Link>
+            <div className="w-full text-center py-6 flex flex-col gap-8 items-start ">
             {navItemsData &&
           navItemsData.map((item, index) => (
             <Link href={item.url} key={index} passHref>
@@ -50,6 +56,7 @@ export default function NavItems({ activeItem, isMobile }: INavItems) {
             </Link>
           ))}
             </div>
+            
         </div>
       )}
     </div>

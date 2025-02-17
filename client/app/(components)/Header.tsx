@@ -14,7 +14,7 @@ interface IHeader {
 export default function Header({ open, setOpen, activeItem }: IHeader) {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
-  const [isMobile, setIsMobile] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     if (window !== undefined) {
@@ -27,6 +27,12 @@ export default function Header({ open, setOpen, activeItem }: IHeader) {
       });
     }
   }, [active]);
+
+  const handleClose = (e: any) => {
+    if (e.target.id === "screen") {
+      setOpenSidebar(false);
+    }
+  };
 
   return (
     <div className="w-full relative">
@@ -57,10 +63,36 @@ export default function Header({ open, setOpen, activeItem }: IHeader) {
             </div>
           </div>
           {/* user icon */}
-          <div className="cursor-pointer dark:text-white text-black" onClick={() => setOpen(!open)}>
+          <div
+            className="cursor-pointer dark:text-white text-black hidden 800px:block"
+            onClick={() => setOpen(!open)}
+          >
             <HiOutlineUserCircle size={25} />
           </div>
         </div>
+
+        {/* mobile sidebar */}
+        {openSidebar && (
+          <div
+            className="fixed w-full h-screen top-0 left-0 right-0 z-[999] dark:bg-[unset] bg-[#00000024]"
+            onClick={handleClose}
+            id="screen"
+          >
+            <div className="w-[70%] z-[999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0 absolute">
+              <NavItems activeItem={activeItem} isMobile={true} />
+              <div
+          className="cursor-pointer dark:text-white text-black mx-5"
+          onClick={() => setOpen(!open)}
+              >
+          <HiOutlineUserCircle size={25} />
+              </div>
+
+              <br />
+              <br />
+              <p className="text-center">Copyright &copy; {new Date().getFullYear()} LMS</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
