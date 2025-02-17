@@ -32,7 +32,7 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable} ${Josefin.variable}`} suppressHydrationWarning>
       <head></head>
       <body
-        className={`!bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:to-black duration-300`}
+        className={`dark:bg-gradient-to-b dark:from-gray-900 dark:to-black duration-300`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <main>{children}</main>

@@ -2,6 +2,9 @@
 
 export default function Hero() {
     return (
-        <div>hero</div>
+        <div className="w-full 1000px:flex items-center">
+            
+
+        </div>
     )
 }
