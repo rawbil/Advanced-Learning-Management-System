@@ -4,6 +4,8 @@ import NavItems from "../(utils)/NavItems";
 import ThemeSwitcher from "../(utils)/ThemeSwitcher";
 import { Menu } from "lucide-react";
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
+import CustomModal from "../(utils)/CustomModal";
+import Login from "./Login";
 
 interface IHeader {
   open: boolean;
@@ -96,6 +98,17 @@ export default function Header({ open, setOpen, activeItem, route, setRoute }: I
           </div>
         )}
       </div>
+
+      {/* auth */}
+      {
+        route === "Login" ? (
+          <>
+          {open && (
+            <CustomModal open={open} setOpen={setOpen} activeItem={activeItem} setRoute={setRoute} component={Login} />
+          )}
+          </>
+        ) : (<div></div>)
+      }
     </div>
   );
 }

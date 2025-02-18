@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.4",
+    "@mui/material": "^6.4.4",
     "@reduxjs/toolkit": "^2.5.1",
     "formik": "^2.4.6",
     "lucide-react": "^0.475.0",
