@@ -25,7 +25,7 @@ export default function Register({ setRoute }: Props) {
     initialValues: { email: "", password: "", name: "" },
     validationSchema: schema,
     onSubmit: async ({ email, password, name }) => {
-      console.log(email, password, name);
+      setRoute("Verification")
     },
   });
 
