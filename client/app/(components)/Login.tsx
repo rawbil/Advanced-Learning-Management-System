@@ -2,6 +2,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa";
 import { Dispatch, SetStateAction, useState } from "react";
+import { styles } from "../styles";
 
 interface Props {
   setRoute: Dispatch<SetStateAction<string>>;
@@ -28,8 +29,32 @@ export default function Login({ setRoute }: Props) {
 
   const { values, errors, touched, handleChange, handleSubmit } = formik;
 
-  
+  return (
+    <div>
+      <div className="w-full">
+        <h1 className={`${styles.title}`}>Login with LMS</h1>
 
+        <form onSubmit={handleSubmit}>
+            <div>
+          <label htmlFor="email" className={`${styles.label}`}>
+            Email:{" "}
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={values.email}
+            onChange={handleChange}
+            id="email"
+            placeholder="johndoe@gmail.com"
+            className={`${errors.email && touched.email && "border border-red-500"}  ${styles.input}`}
+          />
 
-  return <div>Login</div>;
+          <p className="text-red-500 text-sm">{errors.email}</p>
+          </div>
+          {/* password */}
+          <div></div>
+        </form>
+      </div>
+    </div>
+  );
 }
