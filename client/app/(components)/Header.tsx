@@ -7,6 +7,7 @@ import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
 import CustomModal from "../(utils)/CustomModal";
 import Login from "./Login";
 import Register from "./Register";
+import Verification from "./Verification";
 
 interface IHeader {
   open: boolean;
@@ -113,6 +114,12 @@ export default function Header({ open, setOpen, activeItem, route, setRoute }: I
         {open && (
            <CustomModal open={open} setOpen={setOpen} activeItem={activeItem} setRoute={setRoute} component={Register} />
         )}
+        </>) : route === "Verification" ? (<>
+        {open && (
+            <CustomModal open={open} setOpen={setOpen} activeItem={activeItem} setRoute={setRoute} component={Verification} />
+          )
+
+        }
         </>) : <></>
       }
     </div>
