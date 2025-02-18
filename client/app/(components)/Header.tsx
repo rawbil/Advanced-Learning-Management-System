@@ -9,9 +9,11 @@ interface IHeader {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   activeItem: number;
+  route: string,
+  setRoute: Dispatch<SetStateAction<string>>
 }
 
-export default function Header({ open, setOpen, activeItem }: IHeader) {
+export default function Header({ open, setOpen, activeItem, route, setRoute }: IHeader) {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
   const [isMobile, setIsMobile] = useState(false);

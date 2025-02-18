@@ -32,7 +32,7 @@ export default function NavItems({ activeItem, isMobile }: INavItems) {
           navItemsData.map((item, index) => (
             <Link href={item.url} key={index} passHref>
               <span
-                className={`${activeItem === index ? "dark:text-[#37a39a] text-[crimson]" : "dark:text-white text-black"} text-[18px] px-6 font-poppins font-400`}
+                className={`${activeItem === index ? "dark:text-[#37a39a] text-[crimson]" : "dark:text-white text-black"} text-[18px] px-6 font-poppins font-[400]`}
               >{item.name}</span>
             </Link>
           ))}
