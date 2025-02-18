@@ -35,24 +35,39 @@ export default function Login({ setRoute }: Props) {
         <h1 className={`${styles.title}`}>Login with LMS</h1>
 
         <form onSubmit={handleSubmit}>
-            <div>
-          <label htmlFor="email" className={`${styles.label}`}>
-            Email:{" "}
-          </label>
-          <input
-            type="email"
-            name="email"
-            value={values.email}
-            onChange={handleChange}
-            id="email"
-            placeholder="johndoe@gmail.com"
-            className={`${errors.email && touched.email && "border border-red-500"}  ${styles.input}`}
-          />
+          <div>
+            <label htmlFor="email" className={`${styles.label}`}>
+              Email:{" "}
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={values.email}
+              onChange={handleChange}
+              id="email"
+              placeholder="johndoe@gmail.com"
+              className={`${styles.input} ${errors.email && touched.email ? "border border-red-500" : ""}`}
+            />
 
-          <p className="text-red-500 text-sm">{errors.email}</p>
+            <p className="text-red-500 text-sm">{errors.email}</p>
           </div>
           {/* password */}
-          <div></div>
+          <div className="w-full mt-5 relative mb-1">
+            <label htmlFor="password" className={`${styles.label}`}>
+              Password:{" "}
+            </label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              value={values.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              className={`${errors.password && touched.email && "border border-red-500"}  ${styles.input}`}
+            />
+
+            <p className="text-red-500 text-sm">{errors.password}</p>
+          </div>
         </form>
       </div>
     </div>
