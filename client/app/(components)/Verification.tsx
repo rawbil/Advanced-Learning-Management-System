@@ -30,7 +30,7 @@ export default function Verification({ setRoute }: Props) {
   });
 
   const verificationHandler = async () => {
-    setInvalidError(true)
+    setInvalidError(true);
   };
 
   const handleInputChange = (index: number, value: string) => {
@@ -72,9 +72,23 @@ export default function Verification({ setRoute }: Props) {
       <br />
       <br />
       <div className="flex w-full justify-center">
-      <button className={`flex flex-row justify-center items-center py-3 px-6 rounded-full cursor-pointer bg-[#2190ff] min-h-[45px] w-full text-base font-poppins font-semibold mt-5`} onClick={verificationHandler}>Verify OTP</button></div>
+        <button
+          className={`flex flex-row justify-center items-center py-3 px-6 rounded-full cursor-pointer bg-[#2190ff] min-h-[45px] w-full text-base font-poppins font-semibold mt-5`}
+          onClick={verificationHandler}
+        >
+          Verify OTP
+        </button>
+      </div>
       <br />
-      <h5 className="text-center pt-4 font-poppins text-[14px] text-black dark:text-white">Go back to sign in? <span className="text-[#2190ff] pl-1 cursor-pointer" onClick={() => setRoute("Login")}>Sign in</span></h5>
+      <h5 className="text-center pt-4 font-poppins text-[14px] text-black dark:text-white">
+        Go back to sign in?{" "}
+        <span
+          className="text-[#2190ff] pl-1 cursor-pointer"
+          onClick={() => setRoute("Login")}
+        >
+          Sign in
+        </span>
+      </h5>
     </div>
   );
 }
