@@ -30,7 +30,7 @@ export default function Verification({ setRoute }: Props) {
   });
 
   const verificationHandler = async () => {
-    console.log("test");
+    setInvalidError(true)
   };
 
   const handleInputChange = (index: number, value: string) => {
@@ -49,19 +49,19 @@ export default function Verification({ setRoute }: Props) {
       <h1 className={`${styles.title}`}>Verify your account</h1>
       <br />
       <div className="w-full flex items-center justify-center mt-2">
-        <div className="w-[80px] h-[80px] rounded-full bg-[#497df2] flex items-center justify-center">
+        <div className="w-[80px] h-[80px] max-500px:w-[60px] max-500px:h-[60px] rounded-full bg-[#497df2] flex items-center justify-center">
           <VscWorkspaceTrusted size={40} />
         </div>
       </div>
       <br />
       <br />
-      <div className="1100px:w-[70%] m-auto flex items-center justify-around">
+      <div className=" m-auto flex items-center justify-around">
         {Object.keys(verifyNumber).map((key, index) => (
           <input
             type="text"
             key={key}
             ref={inputRefs[index]}
-            className={`w-[65px] h-[65px] bg-transparent border-[3px] rounded-[10px] flex items-center text-black dark:text-white justify-center text-[18px] outline-none font-poppins text-center ${invalidError ? "shake boroder-red-500" : "dark:border-white border-[#0000004a]"}`}
+            className={`w-[65px] h-[65px] max-500px:w-[50px] max-500px:h-[50px] bg-transparent border-[3px] rounded-[10px] flex items-center text-black dark:text-white justify-center text-[18px] outline-none font-poppins text-center ${invalidError ? "shake border-red-500" : "dark:border-white border-[#0000004a]"}`}
             placeholder=""
             maxLength={1}
             value={verifyNumber[key as keyof verifyNumber]}
@@ -71,6 +71,10 @@ export default function Verification({ setRoute }: Props) {
       </div>
       <br />
       <br />
+      <div className="flex w-full justify-center">
+      <button className={`flex flex-row justify-center items-center py-3 px-6 rounded-full cursor-pointer bg-[#2190ff] min-h-[45px] w-full text-base font-poppins font-semibold mt-5`} onClick={verificationHandler}>Verify OTP</button></div>
+      <br />
+      <h5 className="text-center pt-4 font-poppins text-[14px] text-black dark:text-white">Go back to sign in? <span className="text-[#2190ff] pl-1 cursor-pointer" onClick={() => setRoute("Login")}>Sign in</span></h5>
     </div>
   );
 }
