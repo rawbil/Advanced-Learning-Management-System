@@ -58,7 +58,7 @@ export default function Verification({ setRoute }: Props) {
       <div className=" m-auto flex items-center justify-around">
         {Object.keys(verifyNumber).map((key, index) => (
           <input
-            type="text"
+            type="number"
             key={key}
             ref={inputRefs[index]}
             className={`w-[65px] h-[65px] max-500px:w-[50px] max-500px:h-[50px] bg-transparent border-[3px] rounded-[10px] flex items-center text-black dark:text-white justify-center text-[18px] outline-none font-poppins text-center ${invalidError ? "shake border-red-500" : "dark:border-white border-[#0000004a]"}`}
