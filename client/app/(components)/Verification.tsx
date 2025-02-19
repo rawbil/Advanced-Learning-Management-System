@@ -57,9 +57,20 @@ export default function Verification({ setRoute }: Props) {
       <br />
       <div className="1100px:w-[70%] m-auto flex items-center justify-around">
         {Object.keys(verifyNumber).map((key, index) => (
-            <input type="text" key={key} ref={inputRefs[index]} className={`w-[65px] h-[65px] bg-transparent border-[3px] rounded-[10px] flex items-center text-black dark:text-white justify-center text-[18px] outline-none font-poppins text-center ${invalidError ? "shake boroder-red-500" : "dark:border-white border-[#0000004a]"}`} />
+          <input
+            type="text"
+            key={key}
+            ref={inputRefs[index]}
+            className={`w-[65px] h-[65px] bg-transparent border-[3px] rounded-[10px] flex items-center text-black dark:text-white justify-center text-[18px] outline-none font-poppins text-center ${invalidError ? "shake boroder-red-500" : "dark:border-white border-[#0000004a]"}`}
+            placeholder=""
+            maxLength={1}
+            value={verifyNumber[key as keyof verifyNumber]}
+            onChange={(e) => handleInputChange(index, e.target.value)}
+          />
         ))}
       </div>
+      <br />
+      <br />
     </div>
   );
 }
