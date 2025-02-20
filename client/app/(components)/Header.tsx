@@ -13,11 +13,17 @@ interface IHeader {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   activeItem: number;
-  route: string,
-  setRoute: Dispatch<SetStateAction<string>>
+  route: string;
+  setRoute: Dispatch<SetStateAction<string>>;
 }
 
-export default function Header({ open, setOpen, activeItem, route, setRoute }: IHeader) {
+export default function Header({
+  open,
+  setOpen,
+  activeItem,
+  route,
+  setRoute,
+}: IHeader) {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -87,41 +93,62 @@ export default function Header({ open, setOpen, activeItem, route, setRoute }: I
             <div className="w-[70%] z-[999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0 absolute">
               <NavItems activeItem={activeItem} isMobile={true} />
               <div
-          className="cursor-pointer dark:text-white text-black mx-5"
-          onClick={() => setOpen(!open)}
+                className="cursor-pointer dark:text-white text-black mx-5"
+                onClick={() => setOpen(!open)}
               >
-          <HiOutlineUserCircle size={25} />
+                <HiOutlineUserCircle size={25} />
               </div>
 
               <br />
               <br />
-              <p className="text-center">Copyright &copy; {new Date().getFullYear()} LMS</p>
+              <p className="text-center">
+                Copyright &copy; {new Date().getFullYear()} LMS
+              </p>
             </div>
           </div>
         )}
       </div>
 
       {/* auth */}
-      {
-        route === "Login" ? (
-          <>
-          {open && (
-            <CustomModal open={open} setOpen={setOpen} activeItem={activeItem} setRoute={setRoute} component={Login} />
-          )}
-          </>
-        ) : route === "Sign-up" ? (
+      {route === "Login" ? (
         <>
-        {open && (
-           <CustomModal open={open} setOpen={setOpen} activeItem={activeItem} setRoute={setRoute} component={Register} />
-        )}
-        </>) : route === "Verification" ? (<>
-        {open && (
-            <CustomModal open={open} setOpen={setOpen} activeItem={activeItem} setRoute={setRoute} component={Verification} />
-          )
-
-        }
-        </>) : <></>
-      }
+          {open && (
+            <CustomModal
+              open={open}
+              setOpen={setOpen}
+              activeItem={activeItem}
+              setRoute={setRoute}
+              component={Login}
+            />
+          )}
+        </>
+      ) : route === "Sign-up" ? (
+        <>
+          {open && (
+            <CustomModal
+              open={open}
+              setOpen={setOpen}
+              activeItem={activeItem}
+              setRoute={setRoute}
+              component={Register}
+            />
+          )}
+        </>
+      ) : route === "Verification" ? (
+        <>
+          {open && (
+            <CustomModal
+              open={open}
+              setOpen={setOpen}
+              activeItem={activeItem}
+              setRoute={setRoute}
+              component={Verification}
+            />
+          )}
+        </>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
