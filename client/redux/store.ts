@@ -6,7 +6,7 @@ const store = configureStore({
         api: apiSlice.reducer
     },
     devTools: false,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat()
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware)
 });
 
 export default store;
