@@ -41,7 +41,7 @@ export default function Verification({ setRoute }: Props) {
     if (value === "" && index > 0) {
       inputRefs[index - 1].current?.focus();
     } else if (value.length === 1 && index < 3) {
-      inputRefs[index + 1].current?.focus;
+      inputRefs[index + 1].current?.focus();
     }
   };
   return (
@@ -81,7 +81,7 @@ export default function Verification({ setRoute }: Props) {
       </div>
       <br />
       <h5 className="text-center pt-4 font-poppins text-[14px] text-black dark:text-white">
-        Go back to sign in?{" "}
+        Go back to sign in?
         <span
           className="text-[#2190ff] pl-1 cursor-pointer"
           onClick={() => setRoute("Login")}
