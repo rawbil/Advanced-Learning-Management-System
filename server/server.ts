@@ -1,7 +1,7 @@
 import {app} from './app';
 import connectDB from './utils/db';
 require("dotenv").config();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT as string;
 import cloudinary from 'cloudinary'
 
 //cloudinary config

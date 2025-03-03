@@ -2,8 +2,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { styles } from "../styles";
+import { useRegisterMutation } from "@/redux/features/auth/authApi";
+import toast from "react-hot-toast";
 
 interface Props {
   setRoute: Dispatch<SetStateAction<string>>;
@@ -20,12 +22,28 @@ const schema = Yup.object().shape({
 
 export default function Register({ setRoute }: Props) {
   const [show, setShow] = useState(false);
+  const [register, { isError, data, error, isSuccess }] = useRegisterMutation();
+
+  useEffect(() => {
+    if (isSuccess) {
+      const message = data.message || "Registration successful";
+      toast.success(message);
+      setRoute("Verification");
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        toast.error(errorData.data.message);
+      }
+    }
+  }, [isSuccess, error]);
 
   const formik = useFormik({
     initialValues: { email: "", password: "", name: "" },
     validationSchema: schema,
     onSubmit: async ({ email, password, name }) => {
-      setRoute("Verification")
+      const data = { name, email, password };
+      await register(data);
     },
   });
 
