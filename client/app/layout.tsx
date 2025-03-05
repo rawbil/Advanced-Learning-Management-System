@@ -5,6 +5,7 @@ import { Josefin_Sans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import ClientLayout from "@/redux/ClientLayout";
+import AuthProvider from "./(utils)/SessionProvider";
 
 const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
@@ -42,8 +43,10 @@ export default function RootLayout({
       >
         <ClientLayout>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <main>{children}</main>
-            <Toaster position="top-center" reverseOrder={false} />
+            <AuthProvider>
+              <main>{children}</main>
+              <Toaster position="top-center" reverseOrder={false} />
+            </AuthProvider>
           </ThemeProvider>
         </ClientLayout>
       </body>
