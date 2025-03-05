@@ -8,6 +8,10 @@ import CustomModal from "../(utils)/CustomModal";
 import Login from "./Login";
 import Register from "./Register";
 import Verification from "./Verification";
+import { useSelector } from "react-redux";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+const avatar = "/globe.svg";
 
 interface IHeader {
   open: boolean;
@@ -27,6 +31,8 @@ export default function Header({
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { user } = useSelector((state: any) => state.auth);
+  const router = useRouter();
 
   useEffect(() => {
     if (window !== undefined) {
@@ -75,12 +81,23 @@ export default function Header({
             </div>
           </div>
           {/* user icon */}
-          <div
-            className="cursor-pointer dark:text-white text-black hidden 800px:block"
-            onClick={() => setOpen(!open)}
-          >
-            <HiOutlineUserCircle size={25} />
-          </div>
+          {user ? (
+            <Image
+              src={user.avatar ? user.avatar?.url : avatar}
+              alt="avatar"
+              width={40}
+              height={40}
+              className="cursor-pointer dark:text-white text-black hidden 800px:block rounded-full object-cover w-[30px] h-[30px]"
+              onClick={() => router.push("/profile")}
+            />
+          ) : (
+            <div
+              className="cursor-pointer dark:text-white text-black hidden 800px:block"
+              onClick={() => setOpen(!open)}
+            >
+              <HiOutlineUserCircle size={25} />
+            </div>
+          )}
         </div>
 
         {/* mobile sidebar */}
@@ -92,12 +109,23 @@ export default function Header({
           >
             <div className="w-[70%] z-[999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0 absolute">
               <NavItems activeItem={activeItem} isMobile={true} />
-              <div
-                className="cursor-pointer dark:text-white text-black mx-5"
-                onClick={() => setOpen(!open)}
-              >
-                <HiOutlineUserCircle size={25} />
-              </div>
+              {user ? (
+                <Image
+                  src={user.avatar ? user.avatar?.url : avatar}
+                  alt="avatar"
+                  width={40}
+                  height={40}
+                  className="cursor-pointer mx-5 rounded-full object-cover w-[30px] h-[30px]"
+                  onClick={() => router.push("/profile")}
+                />
+              ) : (
+                <div
+                  className="cursor-pointer dark:text-white text-black mx-5"
+                  onClick={() => setOpen(!open)}
+                >
+                  <HiOutlineUserCircle size={25} />
+                </div>
+              )}
 
               <br />
               <br />
