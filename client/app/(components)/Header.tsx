@@ -12,6 +12,8 @@ import { useSelector } from "react-redux";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useSocialAuthMutation } from "@/redux/features/auth/authApi";
+import toast from "react-hot-toast";
 const avatar = "/profile.webp";
 
 interface IHeader {
@@ -34,8 +36,30 @@ export default function Header({
   const [isMobile, setIsMobile] = useState(false);
   const { user } = useSelector((state: any) => state.auth);
   const router = useRouter();
-  const {data} = useSession();
-  console.log(data)
+  const { data } = useSession();
+  const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
+  console.log(data);
+
+  useEffect(() => {
+    if (!user) {
+      if (data) {
+        socialAuth({
+          email: data.user?.email,
+          name: data.user?.name,
+          avatar: data.user?.image,
+        });
+      }
+    }
+    if (isSuccess) {
+      toast.success("Login successful");
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        toast.error(errorData.data.message);
+      }
+    }
+  }, [data]);
 
   useEffect(() => {
     if (window !== undefined) {
