@@ -11,7 +11,7 @@ import Verification from "./Verification";
 import { useSelector } from "react-redux";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-const avatar = "/globe.svg";
+const avatar = "/profile.webp";
 
 interface IHeader {
   open: boolean;
