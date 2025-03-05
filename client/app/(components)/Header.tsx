@@ -11,6 +11,7 @@ import Verification from "./Verification";
 import { useSelector } from "react-redux";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 const avatar = "/profile.webp";
 
 interface IHeader {
@@ -33,6 +34,8 @@ export default function Header({
   const [isMobile, setIsMobile] = useState(false);
   const { user } = useSelector((state: any) => state.auth);
   const router = useRouter();
+  const {data} = useSession();
+  console.log(data)
 
   useEffect(() => {
     if (window !== undefined) {
