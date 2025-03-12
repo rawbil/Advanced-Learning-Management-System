@@ -6,6 +6,9 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import ClientLayout from "@/redux/ClientLayout";
 import AuthProvider from "./(utils)/SessionProvider";
+import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
+import Loader from "./(components)/Loader/Loader";
+import { Custom } from "./(utils)/CustomFile";
 
 const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
@@ -44,7 +47,7 @@ export default function RootLayout({
         <ClientLayout>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <AuthProvider>
-              <main>{children}</main>
+              <main><Custom>{children}</Custom></main>
               <Toaster position="top-center" reverseOrder={false} />
             </AuthProvider>
           </ThemeProvider>
