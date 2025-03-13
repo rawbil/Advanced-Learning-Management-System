@@ -12,7 +12,10 @@ import { useSelector } from "react-redux";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useSocialAuthMutation } from "@/redux/features/auth/authApi";
+import {
+  useLogOutQuery,
+  useSocialAuthMutation,
+} from "@/redux/features/auth/authApi";
 import toast from "react-hot-toast";
 const avatar = "/profile.webp";
 
@@ -38,7 +41,11 @@ export default function Header({
   const router = useRouter();
   const { data } = useSession();
   const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
-  console.log(data);
+  const [logout, setLogout] = useState(false);
+  //console.log(data);
+/*   const {} = useLogOutQuery(undefined, {
+    skip: logout ? true : false,
+  }); */
 
   useEffect(() => {
     if (!user) {
@@ -48,6 +55,9 @@ export default function Header({
           name: data.user?.name,
           avatar: data.user?.image,
         });
+ /*        if (data === null) {
+          setLogout(true);
+        } */
       }
     }
     if (isSuccess) {

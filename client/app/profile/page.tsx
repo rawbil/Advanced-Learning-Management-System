@@ -11,6 +11,7 @@ export default function Profile() {
       const [activeItem, setActiveItem] = useState(0)
       const [route, setRoute] = useState("Login")
       const {user} = useSelector((state: any) => state.auth);
+      console.log(user);
     return (
         <div>
             <Protected>
