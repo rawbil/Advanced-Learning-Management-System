@@ -1,7 +1,9 @@
 "use client";
 import { styles } from "@/app/styles";
+import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
+import { useUpdateAvatarMutation } from "@/redux/features/user/userApi";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineCamera } from "react-icons/ai";
 
 interface Props {
@@ -10,10 +12,32 @@ interface Props {
 
 export default function ProfileInfo({ user }: Props) {
   const [name, setName] = useState(user && user.name);
+  const [updateAvatar, { isSuccess, error }] = useUpdateAvatarMutation();
+  const [loadUser, setLoadUser] = useState(false);
+  const {} = useLoadUserQuery(undefined, { skip: loadUser ? false : true });
 
   const imageHandler = async (e: any) => {
-    console.log("image");
+    //const file = e.target.files[0];
+
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      if (fileReader.readyState === 2) {
+        updateAvatar({
+          avatar: fileReader.result,
+        });
+      }
+    };
+    fileReader.readAsDataURL(e.target.files[0]);
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      setLoadUser(true);
+    }
+    if (error) {
+      console.log(error);
+    }
+  }, [isSuccess]);
 
   const handleSubmit = async (e: any) => {
     console.log("submit");
@@ -65,7 +89,7 @@ export default function ProfileInfo({ user }: Props) {
             </div>
             <div className="w-full pt-2">
               <label htmlFor="email" className="block p-2">
-                Emal Address
+                Email Address
               </label>
               <input
                 type="email"
@@ -76,7 +100,12 @@ export default function ProfileInfo({ user }: Props) {
                 required
               />
             </div>
-            <input type="submit" value="Update" required className={`w-full 800px:w-[250px] 800px:mx-auto h-[40px] border border-[#37a39a] hover:bg-[#37a39a]/20 text-center dark:text-white text-black rounded-[3px] mt-8 cursor-pointer`} />
+            <input
+              type="submit"
+              value="Update"
+              required
+              className={`w-full 800px:w-[250px] 800px:mx-auto h-[40px] border border-[#37a39a] hover:bg-[#37a39a]/20 text-center dark:text-white text-black rounded-[3px] mt-8 cursor-pointer`}
+            />
           </div>
         </form>
       </div>
