@@ -20,7 +20,7 @@ export default function SidebarProfile({
   return (
     <div>
       <div
-        className={`w-full flex items-center px-3 py-4 cursor-pointer ${active === 1 ? "dark:bg-slate-800 bg-white" : "bg-transparent"}`}
+        className={`w-full flex items-center px-3 py-4 cursor-pointer ${active === 1 ? "dark:bg-slate-800 bg-slate-100" : "bg-transparent"}`}
         onClick={() => setActive(1)}
       >
         <Image
@@ -36,14 +36,14 @@ export default function SidebarProfile({
         </h5>
       </div>
       <div
-        className={`w-full flex items-center px-3 py-4 cursor-pointer ${active === 2 ? "dark:bg-slate-800 bg-white" : "bg-transparent"}`}
+        className={`w-full flex items-center px-3 py-4 cursor-pointer ${active === 2 ? "dark:bg-slate-800 bg-slate-100" : "bg-transparent"}`}
         onClick={() => setActive(2)}
       >
         <RiLockPasswordLine size={20} />
         <h5 className="pl-2 800px:block hidden">Change Password</h5>
       </div>
       <div
-        className={`w-full flex items-center px-3 py-4 cursor-pointer ${active === 3 ? "dark:bg-slate-800 bg-white" : "bg-transparent"}`}
+        className={`w-full flex items-center px-3 py-4 cursor-pointer ${active === 3 ? "dark:bg-slate-800 bg-slate-100" : "bg-transparent"}`}
         onClick={() => setActive(3)}
       >
         <SiCoursera size={20} />
