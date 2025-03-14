@@ -10,7 +10,7 @@ import Register from "./Register";
 import Verification from "./Verification";
 import { useSelector } from "react-redux";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
   useLogOutQuery,
@@ -23,6 +23,7 @@ interface IHeader {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   activeItem: number;
+  setActiveItem: Dispatch<SetStateAction<number>>;
   route: string;
   setRoute: Dispatch<SetStateAction<string>>;
 }
@@ -31,6 +32,7 @@ export default function Header({
   open,
   setOpen,
   activeItem,
+  setActiveItem,
   route,
   setRoute,
 }: IHeader) {
@@ -46,6 +48,7 @@ export default function Header({
 /*   const {} = useLogOutQuery(undefined, {
     skip: logout ? true : false,
   }); */
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!user) {
@@ -55,7 +58,7 @@ export default function Header({
           name: data.user?.name,
           avatar: data.user?.image,
         });
- /*        if (data === null) {
+      /*if (data === null) {
           setLogout(true);
         } */
       }
@@ -124,8 +127,8 @@ export default function Header({
               alt="avatar"
               width={40}
               height={40}
-              className="cursor-pointer dark:text-white text-black hidden 800px:block rounded-full object-cover w-[30px] h-[30px]"
-              onClick={() => router.push("/profile")}
+              className={`cursor-pointer dark:text-white text-black hidden 800px:block rounded-full object-cover w-[30px] h-[30px] ${activeItem === 4 && 'border-2 border-[#37a39a]'} ${pathname === '/profile' && 'border-2 dark:border-[#37a39a] border-[crimson]'}`}
+              onClick={() => {router.push("/profile"); setActiveItem(4)}}
             />
           ) : (
             <div
@@ -152,8 +155,8 @@ export default function Header({
                   alt="avatar"
                   width={40}
                   height={40}
-                  className="cursor-pointer mx-5 rounded-full object-cover w-[30px] h-[30px]"
-                  onClick={() => router.push("/profile")}
+                  className={`cursor-pointer mx-5 rounded-full object-cover w-[30px] h-[30px] ${pathname === '/profile' && 'border-2 dark:border-[#37a39a] border-[crimson]'}`}
+                  onClick={() => {router.push("/profile"); () => setActiveItem(4)}}
                 />
               ) : (
                 <div

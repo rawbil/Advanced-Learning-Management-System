@@ -360,7 +360,7 @@ export const UpdateUserInfo = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email } = req.body;
-      if (name && email) {
+      if (!name && !email) {
         return next(new ErrorHandler("Please provide at least one field", 400));
       }
       const userId = req.user?._id as string;

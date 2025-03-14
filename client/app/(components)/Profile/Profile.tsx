@@ -14,14 +14,14 @@ export default function ProfileComponent({ user }: Props) {
   const [scroll, setScroll] = useState(false);
   //const [avatar, setAvatar] = useState(null);
   const [active, setActive] = useState(1);
-  const [logout, setLogout] = useState(false);
+/*   const [logout, setLogout] = useState(false);
   const {} = useLogOutQuery(undefined, {
     skip: logout ? true : false,
-  });
+  }); */
 
   const logoutHandler = async () => {
+   // setLogout(true);
     await signOut();
-    setLogout(true);
   };
 
   if (typeof window !== undefined) {
@@ -35,7 +35,7 @@ export default function ProfileComponent({ user }: Props) {
   }
 
   return (
-    <div className="w-[85%] h-screen max-800px:w-[95%] flex mx-auto">
+    <div className="w-[85%] min-h-screen max-800px:w-[95%] flex mx-auto">
       <div
         className={`w-[60px] 800px:w-[310px] h-[450px] dark:bg-slate-900 bg-white bg-opacity-90 border dark:border-[#ffffff1d] rounded-[5px] dark:shadow-sm shadow-md mt-[80px] mb-[80px] relative ${scroll ? "top-[120px]" : "top-[30px]"} left-[60px] max-800px:left-[0px] `}
       >

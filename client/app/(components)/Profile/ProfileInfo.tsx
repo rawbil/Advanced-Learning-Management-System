@@ -1,9 +1,13 @@
 "use client";
 import { styles } from "@/app/styles";
 import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
-import { useUpdateAvatarMutation } from "@/redux/features/user/userApi";
+import {
+  useEditProfileMutation,
+  useUpdateAvatarMutation,
+} from "@/redux/features/user/userApi";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { AiOutlineCamera } from "react-icons/ai";
 
 interface Props {
@@ -11,10 +15,12 @@ interface Props {
 }
 
 export default function ProfileInfo({ user }: Props) {
-  const [name, setName] = useState(user && user.name);
+  const [name, setName] = useState(user?.name || "");
   const [updateAvatar, { isSuccess, error }] = useUpdateAvatarMutation();
   const [loadUser, setLoadUser] = useState(false);
   const {} = useLoadUserQuery(undefined, { skip: loadUser ? false : true });
+  const [editProfile, { isSuccess: success, error: isError }] =
+    useEditProfileMutation();
 
   const imageHandler = async (e: any) => {
     //const file = e.target.files[0];
@@ -22,25 +28,38 @@ export default function ProfileInfo({ user }: Props) {
     const fileReader = new FileReader();
     fileReader.onload = () => {
       if (fileReader.readyState === 2) {
-        updateAvatar({
-          avatar: fileReader.result,
-        });
+        const avatar = fileReader.result;
+        updateAvatar(avatar);
       }
     };
     fileReader.readAsDataURL(e.target.files[0]);
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    setName(user?.name || "");
+  }, [user]);
+
+  useEffect(() => {
+    if (isSuccess || success) {
       setLoadUser(true);
+     // window.location.reload();
+      toast.success("Profile Updated Successfully");
     }
-    if (error) {
+    if (error || isError) {
       console.log(error);
     }
-  }, [isSuccess]);
+
+  }, [isSuccess, error, success, isError]);
 
   const handleSubmit = async (e: any) => {
-    console.log("submit");
+    e.preventDefault();
+    try {
+       if (name !== "") {
+        await editProfile({ name });
+      }
+    } catch (error: any) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -54,6 +73,7 @@ export default function ProfileInfo({ user }: Props) {
             height={50}
             unoptimized
             className="w-[120px] h-[120px] cursor-pointer border-[3px] border-[#37a39a] rounded-full object-cover "
+            priority
           />
           <input
             type="file"

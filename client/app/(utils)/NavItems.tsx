@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface INavItems {
   activeItem: number;
@@ -25,6 +26,7 @@ export const navItemsData = [
 ];
 
 export default function NavItems({ activeItem, isMobile }: INavItems) {
+  const pathname = usePathname();
   return (
     <div>
       <div className="hidden 800px:flex">
@@ -32,7 +34,7 @@ export default function NavItems({ activeItem, isMobile }: INavItems) {
           navItemsData.map((item, index) => (
             <Link href={item.url} key={index} passHref>
               <span
-                className={`${activeItem === index ? "dark:text-[#37a39a] text-[crimson]" : "dark:text-white text-black"} text-[18px] px-6 font-poppins font-[400]`}
+                className={`${pathname === item.url ? "dark:text-[#37a39a] text-[crimson]" : "dark:text-white text-black"} text-[18px] px-6 font-poppins font-[400]`}
               >
                 {item.name}
               </span>
@@ -53,7 +55,7 @@ export default function NavItems({ activeItem, isMobile }: INavItems) {
               navItemsData.map((item, index) => (
                 <Link href={item.url} key={index} passHref>
                   <span
-                    className={`${activeItem === index ? "dark:text-[#37a39a] text-[crimson]" : "dark:text-white text-black"} text-[18px] px-6 font-poppins font-400`}
+                    className={`${pathname === item.url ? "dark:text-[#37a39a] text-[crimson]" : "dark:text-white text-black"} text-[18px] px-6 font-poppins font-400`}
                   >
                     {item.name}
                   </span>

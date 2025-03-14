@@ -4,13 +4,21 @@ export const userApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         updateAvatar: builder.mutation({
             query: (avatar) => ({
-                url: "update-user-avatar",
+                url: "update-avatar",
                 method: "PUT",
                 body: {avatar},
                 credentials: "include" as const,
             })
-        })
+        }),
+        editProfile: builder.mutation({
+            query: ({name}) => ({
+                url: "update-user",
+                method: "PUT",
+                body: {name},
+                credentials: "include" as const,
+            })
+        }),
     })
 })
 
-export const {useUpdateAvatarMutation} = userApi
+export const {useUpdateAvatarMutation, useEditProfileMutation} = userApi
